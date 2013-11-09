@@ -10,7 +10,21 @@ import os
 
 ctypedef np.float64_t DOUBLE
 
-cdef mc_kernel(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts):
+cdef mc_kernel(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts, object args):
+    cdef double summ = 0.0
+    cdef double sum2 = 0.0
+    cdef int ipt,i
+    cdef double val
+    cdef np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+    for ipt in range(npts):
+        for i in range(dim):
+            pt[i] = pts[ipt,i]
+        val = f(pt,*args)
+        summ += val
+        sum2 += val*val
+    return summ, sum2
+
+cdef mc_kernel_noargs(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts):
     cdef double summ = 0.0
     cdef double sum2 = 0.0
     cdef int ipt,i
@@ -33,8 +47,7 @@ cdef void generate_points(int npoints, int dim,
         for idim in range(dim):
             pts[ipt,idim] = xl[idim] + (xu[idim]-xl[idim])*pts[ipt,idim]
 
-
-def integrate_kernel(f,int npoints, xl, xu, rng=numpy.random,seed=None):
+def integrate_kernel(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None):
     cdef :
         int dim = len(xl)
         np.ndarray[DOUBLE,ndim=2] points
@@ -52,7 +65,10 @@ def integrate_kernel(f,int npoints, xl, xu, rng=numpy.random,seed=None):
 
     volume = abs(np.multiply.reduce(xu-xl))
     generate_points(npoints, dim, xl_a, xu_a, points)
-    summ, sum2 = mc_kernel(f,npoints,dim,points)
+    if len(args) > 0:
+        summ, sum2 = mc_kernel(f,npoints,dim,points,args)
+    else:
+        summ, sum2 = mc_kernel_noargs(f,npoints,dim,points)
     summ *= volume
     sum2 *= volume**2
     average = summ/float(npoints)

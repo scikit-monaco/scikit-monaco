@@ -14,12 +14,13 @@ class _MC_Integrator(object):
 
     default_batch_size = 10000
 
-    def __init__(self,f,npoints,xl,xu,
+    def __init__(self,f,npoints,xl,xu,args=(),
             rng=numpy.random,nprocs=None,seed=None,batch_size=None):
         self.f = f
         self.npoints = int(npoints)
         self.xl = np.array(xl)
         self.xu = np.array(xu)
+        self.args = args
         if len(self.xl) != len(self.xu):
             raise ValueError("'xl' and 'xu' must be the same length.")
         if nprocs is None:
@@ -70,7 +71,7 @@ class _MC_Integrator(object):
         def func(batch_number):
             seed = seed_gen(batch_number)
             return integrate_kernel(f,batches[batch_number],
-                    xl,xu,rng=self.rng,seed=seed)
+                    xl,xu,args=self.args,rng=self.rng,seed=seed)
         return func
 
     def run_serial(self):
@@ -97,7 +98,7 @@ class _MC_Integrator(object):
         else:
             return self.run_parallel()
 
-def mcquad(f,npoints,xl,xu,rng=numpy.random,nprocs=None,
+def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
         seed=None,batch_size=None):
     """
     Compute a definite integral.
@@ -165,5 +166,6 @@ def mcquad(f,npoints,xl,xu,rng=numpy.random,nprocs=None,
     >>> np.pi/4.
     0.7853981633974483
     """
-    return _MC_Integrator(f,npoints,xl,xu,rng,nprocs,seed,batch_size).run()
+    return _MC_Integrator(f,npoints,args=args,
+            xl=xl,xu=xu,rng=rng,nprocs=nprocs,seed=seed,batch_size=batch_size).run()
     
