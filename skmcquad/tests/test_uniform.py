@@ -1,6 +1,6 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite
+from numpy.testing import TestCase, run_module_suite, build_err_msg
 
 from skmcquad.uniform import mcquad
 
@@ -18,18 +18,30 @@ class TestMCQuad(TestCase):
     def setUp(self):
         self.gaussian = lambda x: np.exp(-sum(x**2))
 
+    def calc_volume(self,xl,xu):
+        xl = np.array(xl)
+        xu = np.array(xu)
+        return np.multiply.reduce(abs(xu-xl))
+
+
     def run_serial(self,f,npoints,expected_value,expected_variance,**kwargs):
         res, sd = mcquad(f,npoints,nprocs=1,**kwargs)
-        error = np.sqrt(expected_variance/float(npoints))
-        self.assertTrue(within_tol(res,expected_value,3.*max(error,1e-10)))
-        self.assertTrue(within_tol(sd,error,0.1*max(error,1e-10)))
+        volume = self.calc_volume(kwargs["xl"],kwargs["xu"])
+        error = volume*np.sqrt(expected_variance/float(npoints))
+        assert_within_tol(res,expected_value,3.*max(error,1e-10),
+            "Error in <f> in serial run.")
+        assert_within_tol(sd,error,0.1*max(error,1e-10),
+            "Error in expected error in serial run.")
 
     def run_parallel(self,f,npoints,expected_value,expected_variance,**kwargs):
         batch_size = npoints/10
         res, sd = mcquad(f,npoints,nprocs=2,batch_size=batch_size,**kwargs)
-        error = np.sqrt(expected_variance/float(npoints))
-        self.assertTrue(within_tol(res,expected_value,3.*max(error,1e-10)))
-        self.assertTrue(within_tol(sd,error,0.1*max(error,1e-10)))
+        volume = self.calc_volume(kwargs["xl"],kwargs["xu"])
+        error = volume*np.sqrt(expected_variance/float(npoints))
+        assert_within_tol(res,expected_value,3.*max(error,1e-10),
+                "Error in <f> in parallel run.")
+        assert_within_tol(sd,error,0.1*max(error,1e-10),
+                "Error in expected error in parallel run.")
 
     def run_all(self,f,npoints,expected_value,expected_variance,**kwargs):
         self.run_serial(f,npoints,expected_value,expected_variance,**kwargs)
@@ -98,6 +110,12 @@ class TestMCQuad(TestCase):
         variance = self.prod_variance(1)
         self.run_all(self.prod,npoints,0.5,variance,xl=[0.],xu=[1.])
 
+    def test_prod1db(self):
+        """ f(x) = x between -2 and 1. """
+        npoints = 2000
+        variance = (1+2**3)/3. - 1.5**2
+        self.run_all(self.prod,npoints,-1.5,variance,xl=[-2.],xu=[1.])
+
     def test_prod2d(self):
         """ f(x,y) = x*y between 0 and 1. """
         npoints = 2000
@@ -109,6 +127,18 @@ class TestMCQuad(TestCase):
         npoints = 50000
         variance = self.prod_variance(6)
         self.run_all(self.prod,npoints,0.5**6,variance,xl=[0.]*6,xu=[1.]*6)
+
+    def test_args(self):
+        """
+        Test passing args to the function.
+
+        f(x ; a) = a*x
+        """
+        a = 2.
+        func = lambda x, a_: a_*x
+        npoints = 2000
+        variance = 4.*self.prod_variance(1)
+        self.run_all(func,npoints,a*0.5,variance,xl=[0.],xu=[1.],args=(a,))
 
     def test_wrong_xl(self):
         """
@@ -142,6 +172,11 @@ class TestMCQuad(TestCase):
 
 def within_tol(a,b,tol):
     return np.abs(a-b).max() < tol
+
+def assert_within_tol(a,b,tol,err_msg=""):
+    if not within_tol(a,b,tol):
+        msg = build_err_msg((a,b),err_msg)
+        raise AssertionError(msg)
 
 if __name__ == '__main__':
     run_module_suite()
