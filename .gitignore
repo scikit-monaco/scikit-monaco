@@ -1,0 +1,13 @@
+
+*.pyc
+*.so
+*.aux
+*.log
+*.swp
+*.egg-info/
+
+build/
+doc/build/
+skmcquad/build/
+
+skmcquad/_mc.c
