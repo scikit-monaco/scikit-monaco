@@ -6,7 +6,7 @@ import time
 import os
 
 import mp
-from _mc import integrate_kernel
+from _mc import integrate_uniform
 
 __all__ = [ "mcquad" ]
 
@@ -70,7 +70,7 @@ class _MC_Integrator(object):
         seed_gen = self.get_seed_for_batch
         def func(batch_number):
             seed = seed_gen(batch_number)
-            return integrate_kernel(f,batches[batch_number],
+            return integrate_uniform(f,batches[batch_number],
                     xl,xu,args=self.args,rng=self.rng,seed=seed)
         return func
 
@@ -98,6 +98,7 @@ class _MC_Integrator(object):
         else:
             return self.run_parallel()
 
+
 def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
         seed=None,batch_size=None):
     """
@@ -107,7 +108,6 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
     
     Parameters
     ----------
-
     f : function
         A Python function or method to integrate. It must take an iterable
         of length `d`, where `d` is the dimensionality of the integral,
@@ -118,18 +118,8 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
         Iterable of length d denoting the bottom left corner and upper 
         right corner of the integration region.
 
-    Returns
-    -------
-
-    value : float
-        The estimate for the integral.
-    error : float
-        An estimate for the error (the integral has a 0.68 probability of
-        being within `error` of the correct answer).
-
     Other Parameters
     ----------------
-
     nprocs : int >= 1, optional
         Number of processes to use concurrently for the integration. Use 
         nprocs=1 to force a serial evaluation of the integral. This defaults
@@ -149,13 +139,22 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
         be useful to reduce `batch_size` if the dimensionality of the 
         integration is very large.
 
+    Returns
+    -------
+    value : float
+        The estimate for the integral.
+    error : float
+        An estimate for the error (the integral has a 0.68 probability of
+        being within `error` of the correct answer).
+
+
     Examples
     --------
 
     Integrate x*y over the unit square. The true value is 1./4.
 
     >>> mcquad(lambda x: x[0]*x[1], npoints=20000, xl=[0.,0.],xu=[1.,1.])
-    (0.24966..., 0.0015488)
+    (0.24966..., 0.0015488...)
 
     Calculate pi/4 by summing over all points in the unit circle that 
     fall within 1 of the origin.

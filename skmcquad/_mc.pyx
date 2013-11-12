@@ -3,6 +3,7 @@ import numpy as np
 import numpy.random
 cimport numpy as np
 cimport cython
+from libc.math cimport sqrt
 import time
 from libc.stdlib cimport malloc, free
 from cython.parallel import prange, parallel
@@ -10,33 +11,37 @@ import os
 
 ctypedef np.float64_t DOUBLE
 
-cdef mc_kernel(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts, object args):
-    cdef double summ = 0.0
-    cdef double sum2 = 0.0
-    cdef int ipt,i
-    cdef double val
-    cdef np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+cdef void mc_kernel(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts, 
+        object args, double* summ, double* sum2):
+    cdef :
+        int ipt,i
+        double val
+        np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+        double sum_tmp = 0.0, sum2_tmp = 0.0
     for ipt in range(npts):
         for i in range(dim):
             pt[i] = pts[ipt,i]
         val = f(pt,*args)
-        summ += val
-        sum2 += val*val
-    return summ, sum2
+        sum_tmp += val
+        sum2_tmp += val*val
+    summ[0] = sum_tmp
+    sum2[0] = sum2_tmp
 
-cdef mc_kernel_noargs(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts):
-    cdef double summ = 0.0
-    cdef double sum2 = 0.0
-    cdef int ipt,i
-    cdef double val
-    cdef np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+cdef mc_kernel_noargs(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts,
+        double* summ, double* sum2):
+    cdef :
+        int ipt,i
+        double val
+        np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+        double sum_tmp = 0.0, sum2_tmp = 0.0
     for ipt in range(npts):
         for i in range(dim):
             pt[i] = pts[ipt,i]
         val = f(pt)
-        summ += val
-        sum2 += val*val
-    return summ, sum2
+        sum_tmp += val
+        sum2_tmp += val*val
+    summ[0] = sum_tmp
+    sum2[0] = sum2_tmp
 
 cdef void generate_points(int npoints, int dim, 
         np.ndarray[DOUBLE,ndim=1] xl, 
@@ -47,7 +52,22 @@ cdef void generate_points(int npoints, int dim,
         for idim in range(dim):
             pts[ipt,idim] = xl[idim] + (xu[idim]-xl[idim])*pts[ipt,idim]
 
-def integrate_kernel(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None):
+cdef run_integral(object f,int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts, 
+        double weight, object args):
+    cdef :
+        double summ, sum2, npts_float, average, sd
+    if len(args) > 0:
+        mc_kernel(f,npts,dim,pts,args,&summ,&sum2)
+    else:
+        mc_kernel_noargs(f,npts,dim,pts,&summ,&sum2)
+    summ *= weight
+    sum2 *= weight**2
+    npts_float = <double>npts
+    average = summ/npts_float
+    sd = sqrt(sum2-summ**2/npts_float)/npts_float
+    return average, sd
+
+def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None):
     cdef :
         int dim = len(xl)
         np.ndarray[DOUBLE,ndim=2] points
@@ -61,16 +81,9 @@ def integrate_kernel(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None):
     if seed is None:
         seed = [time.time()+os.getpid()]
     rng.seed(seed)
-    points = rng.ranf((npoints,dim))
 
+    points = rng.ranf((npoints,dim))
     volume = abs(np.multiply.reduce(xu-xl))
     generate_points(npoints, dim, xl_a, xu_a, points)
-    if len(args) > 0:
-        summ, sum2 = mc_kernel(f,npoints,dim,points,args)
-    else:
-        summ, sum2 = mc_kernel_noargs(f,npoints,dim,points)
-    summ *= volume
-    sum2 *= volume**2
-    average = summ/float(npoints)
-    return average, np.sqrt(sum2-summ**2/float(npoints))/float(npoints)
+    return run_integral(f,npoints,dim,points,volume,args)
     
