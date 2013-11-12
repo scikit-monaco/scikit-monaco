@@ -4,5 +4,5 @@ Tutorials
 
 .. toctree::
 
-    tutorials/uniform_tutorial.rst
+    tutorials/getting_started.rst
     

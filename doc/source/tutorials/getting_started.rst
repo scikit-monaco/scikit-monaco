@@ -2,11 +2,14 @@
 Getting started
 ===============
 
+.. currentmodule:: skmcquad
+
 **Scikit-mcquad** is a toolkit for Monte Carlo integration. It is
 written in Cython for efficiency and includes parallelism to take
 advantage of processors with multiple core.
 
-Let's suppose that we want to calculate this integral: :math:`\int_0^1 \int_0^1 x \cdot y \, dx dy`:
+Let's suppose that we want to calculate this integral: :math:`\int_0^1 \int_0^1 x \cdot y \, dx dy`. 
+This could be computed using :func:`mcquad`.
 
 .. code:: python
 
@@ -15,22 +18,60 @@ Let's suppose that we want to calculate this integral: :math:`\int_0^1 \int_0^1 
     ...     xl=[0.,0.],xu=[1.,1.], # lower and upper limits of integration
     ...     npoints=100000 # number of points
     ...     ) 
-
     (0.24959359250821114, 0.0006965923631156234)
 
-``mcquad`` returns two numbers. The first (0.2496...) is the value of
+:func:`mcquad` returns two numbers. The first (0.2496...) is the value of
 the integral. The second is the estimate in the error (corresponding,
 roughly, to one standard deviation). Note that the correct answer in
 this case is :math:`1/4`.
 
-The ``mcquad`` call distributes points uniformly in a hypercube and sums 
-the value of the integrand over those points. The integrand is specified 
-as a function ``lambda xs : f(xs)`` whose first argument must be a list
-of length `d` describing a point in the integration volume (where `d` is 
-the number of dimensions of the problem).
+The :func:`mcquad` call distributes points uniformly in a hypercube and sums 
+the value of the integrand over those points. 
+The first argument to :func:`mcquad` is a callable specifying the integrand.
+This can often be done conveniently using a lambda function. The integrand must
+take a single argument: a numpy array of length `d`, where `d` is the number of 
+dimensions in the integral.  For instance, the following would be valid integrands:
+
+.. code:: python
+    
+    >>> from math import sin,cos
+    >>> integrand = lambda x: x**2
+    >>> integrand = lambda (x,y): sin(x)*cos(y)
+    >>> integrand = lambda xs: sum(xs)
+
+If the integrand takes additional parameters, they can be passed to the
+function through the `args` argument. Suppose that we want to evaluate the
+product of two Gaussians with exponential factors ``alpha`` and ``beta``:
+
+.. code:: python
+    
+    >>> import numpy as np
+    >>> from skmcquad import mcquad
+    >>> f = lambda (x,y),alpha,beta: np.exp(-alpha*x**2)*np.exp(-beta*y**2)
+    >>> alpha = 1.0
+    >>> beta = 2.0
+    >>> mcquad(f,xl=[0.,0.],xu=[1.,1.],npoints=100000,args=(alpha,beta))
+    (0.44650031245386379, 0.00079929285076240579)
+
+:func:`mcquad` runs on a single core as default. The parallel behaviour can be
+controlled by the `nprocs` parameter. The following can be run in an
+ipython session to take advantage of their timing routines.
+
+.. code:: python
+
+    >>> from math import sin,cos
+    >>> from skmcquad import mcquad
+    >>> f = lambda x,y: sin(x)*cos(y)
+    >>> %timeit mcquad(f,xl=[0.,0.],xu=[1.,1.],npoints=1e6,nprocs=1) 
+    1 loops, best of 3: 2.26 s per loop
+    >>> %timeit mcquad(f,xl=[0.,0.],xu=[1.,1.],npoints=1e6,nprocs=2) 
+    1 loops, best of 3: 1.36 s per loop
+    
+
+.. _complex-integration-volumes:
 
 Complex integration volumes
----------------------------
+===========================
 
 Monte Carlo integration is very useful when calculating integrals over
 complicated integration volumes. Consider the integration volume shown in red 
@@ -93,14 +134,7 @@ To give a concrete example, let's take :math:`f(x,y) = y^2`.
         else:
             return 0.
 
-To speed up the calculation, we can run the integration in parallel.
-This is done by passing an ``nprocs`` keyword argument (note that this
-only results in a speedup on a multi-core processor):
-
-.. code:: python
-
-    >>> from skmcquad import mcquad
-    >>> mcquad(g,npoints=100000,xl=[1.,-2.],xu=[3.,3.],nprocs=4)
-    (9.9161745618624231, 0.049412524880183335)
+    mcquad(g,npoints=100000,xl=[1.,-2.],xu=[3.,3.],nprocs=4)
+    # (9.9161745618624231, 0.049412524880183335)
 
 
