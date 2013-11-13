@@ -1,3 +1,6 @@
+
+from __future__ import division
+
 import numpy as np
 import multiprocessing
 import mp
@@ -36,10 +39,10 @@ class _MC_Base(object):
 
     def create_batches(self):
         if self.npoints % self.batch_size < 0.1*self.batch_size:
-            nbatches = self.npoints / self.batch_size-1
+            nbatches = self.npoints // self.batch_size-1
             remainder = self.batch_size + self.npoints % self.batch_size
         else:
-            nbatches = self.npoints / self.batch_size
+            nbatches = self.npoints // self.batch_size
             remainder = self.npoints % self.batch_size
         return [ self.batch_size ]*nbatches + [remainder]
 
