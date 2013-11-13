@@ -87,3 +87,37 @@ def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None)
     generate_points(npoints, dim, xl_a, xu_a, points)
     return run_integral(f,npoints,dim,points,volume,args)
     
+def integrate_importance(f,int npoints, int dim, distribution, 
+        args=(), rng=numpy.random, seed=None, dist_args=(),dist_kwargs={},weight=1.0):
+    cdef :
+        np.ndarray[DOUBLE,ndim=2] points
+
+    if npoints < 2:
+        raise ValueError("'npoints must be >= 2.")
+
+    pts_generated = np.size(distribution(size=1,*args,**dist_kwargs))
+    print "points generated: ",pts_generated
+    if pts_generated not in (1,dim):
+        raise ValueError("Distribution function must return either a single value or "
+                "an array of length `dim`")
+
+    if seed is None:
+        seed = [time.time()+os.getpid()]
+
+    t0 = time.time()
+    if pts_generated == 1:
+        points = distribution(size=(npoints,dim),*dist_args,**dist_kwargs).\
+                reshape((npoints,dim))
+    else:
+        points = distribution(size=npoints,*dist_args,**dist_kwargs).\
+                reshape((npoints,dim))
+    t1 = time.time() ; print "Time taken generating points: ",t1-t0
+        
+    av,sd = run_integral(f,npoints,dim,points,weight,args)
+
+    t2 = time.time(); print "Time taken evaluating function: ",t2-t1
+
+    return av,sd
+
+
+
