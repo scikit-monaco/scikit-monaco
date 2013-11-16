@@ -118,6 +118,16 @@ class TestMCImport(TestCase):
                 exp_integral,cval*exp_integral-exp_integral**2,
                 dist_kwargs=dict(scale=cval))
 
+    def test_seed(self):
+        """
+        Test same seed -> same result.
+        """
+        npoints = 50000
+        res,error = mcimport(lambda x: x<1.0,npoints,exponential,seed=[1234,5678])
+        res2, error2 = mcimport(lambda x: x<1.0,npoints,exponential,seed=[1234,5678])
+        assert res == res2
+        assert error == error2
+                
 
 #FIXME refactor
 def within_tol(a,b,tol):

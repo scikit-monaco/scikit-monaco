@@ -100,6 +100,7 @@ def integrate_importance(f,int npoints, distribution,
 
     if seed is None:
         seed = [time.time()+os.getpid()]
+    rng.seed(seed)
 
     #t0 = time.time()
     if np.size(pts_generated) == 1 and np.rank(pts_generated) == 1:
