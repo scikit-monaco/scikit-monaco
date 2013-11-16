@@ -28,7 +28,7 @@ class _MC_Importance_Integrator(_MC_Base):
     def make_integrator(self):
         def func(batch_number):
             seed = self.get_seed_for_batch(batch_number)
-            return integrate_importance(self.f,self.npoints,
+            return integrate_importance(self.f,self.batches[batch_number],
                     self.distribution,self.args,self.rng,seed,
                     self.dist_kwargs,self.weight)
         return func

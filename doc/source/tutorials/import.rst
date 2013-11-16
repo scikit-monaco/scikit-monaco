@@ -24,7 +24,7 @@ To use importance sampling, we need to factor the integrand :math:`f(x)` into a 
     >>> result # Correct answer: 1.42293
     1.423388348518721
     >>> error
-    0.00087014673431264327
+    0.002748743084305
 
 We see that :func:`mcimport` takes at least three arguments, the first one being the function :math:`h(x)`, that is, the integrand divided by the probability distribution from which we sample, the second being the number of points and the third is a function that returns random samples from the probability distribution :math:`\rho(x)`.  The ``numpy.random`` module provides many useful distributions that can be passed to ``mcimport``. :func:`mcimport` returns two numbers: the first corresponds to the integral estimate, and the second corresponds to the estimated error. 
 
@@ -79,7 +79,7 @@ The function to sample is :math:`f(x,y) = 2` (the factor of 2 cancels the ``1/(h
             return 0.
 
     mcimport(f,1e5,distribution,nprocs=4)
-    # (1.18885, 0.00098200089415437924)
+    # (1.18178, 0.0031094848254976256)
 
 Choosing a probability distribution
 -----------------------------------
