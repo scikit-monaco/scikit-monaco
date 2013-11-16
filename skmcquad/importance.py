@@ -61,8 +61,8 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
         The module `numpy.random` contains a large number of 
         distributions that can be used here.
 
-    Other Paramters
-    ---------------
+    Other Parameters
+    ----------------
     args : tuple, optional
         Extra arguments to be passed to `f`.
     dist_kwargs : dictionary, optional
