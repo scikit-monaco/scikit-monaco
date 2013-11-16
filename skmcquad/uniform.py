@@ -22,7 +22,7 @@ class _MC_Integrator(_MC_Base):
             raise ValueError("'xl' and 'xu' must be the same length.")
         if self.npoints < 2:
             raise ValueError("'npoints' must be >= 2.")
-        self.seed_generator = random_utils.SeedGenerator()
+        self.seed_generator = random_utils.SeedGenerator(seed)
         _MC_Base.__init__(self,nprocs,batch_size)
 
     def make_integrator(self):

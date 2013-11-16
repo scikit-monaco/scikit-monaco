@@ -21,7 +21,7 @@ class _MC_Importance_Integrator(_MC_Base):
         self.weight = weight
         self.args = args
         self.rng = rng
-        self.seed_generator = random_utils.SeedGenerator()
+        self.seed_generator = random_utils.SeedGenerator(seed)
         _MC_Base.__init__(self,nprocs,batch_size)
 
     def get_ndims(self):

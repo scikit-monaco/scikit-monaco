@@ -166,10 +166,20 @@ class TestMCQuad(TestCase):
         Test same seed -> same result.
         """
         npoints = 50000
-        res,error = mcquad(self.const,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
-        res2, error2 = mcquad(lambda x: x<1.0,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
+        res,error = mcquad(lambda x:x**2,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
+        res2, error2 = mcquad(lambda x:x**2,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
         assert res == res2
         assert error == error2
+
+    def test_seed_different(self):
+        """
+        Test different seed -> different result.
+        """
+        npoints = 50000
+        res,error = mcquad(lambda x: x**2,npoints,xl=[0.],xu=[1.],seed=[1235,5678])
+        res2, error2 = mcquad(lambda x: x**2,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
+        assert res != res2
+        assert error != error2
 
 
 def within_tol(a,b,tol):
