@@ -77,8 +77,11 @@ Monte Carlo integration is very useful when calculating integrals over
 complicated integration volumes. Consider the integration volume shown in red 
 in this figure:
 
-.. image:: rings.*
+.. _ring-figure:
+
+.. figure:: rings.*
     :height: 350pt
+    :align: center
 
 The integration volume is the intersection of a ring bounded by circles 
 of radius 2 and 3, and a large square.
