@@ -4,23 +4,12 @@ from __future__ import division
 import numpy as np
 import multiprocessing
 import mp
-import time
-import os
 
 class _MC_Base(object):
 
     default_batch_size = 10000
 
-    def __init__(self,rng,nprocs,seed,batch_size):
-        self.rng = rng
-        if seed is None:
-            self.seed = [ time.time(), os.getpid() ]
-        else:
-            try:
-                seed + []
-            except TypeError:
-                raise TypeError("Seed must be a list.")
-            self.seed = seed
+    def __init__(self,nprocs,batch_size):
         if nprocs is None:
             self.nprocs = multiprocessing.cpu_count()
         else:
@@ -45,9 +34,6 @@ class _MC_Base(object):
             nbatches = self.npoints // self.batch_size
             remainder = self.npoints % self.batch_size
         return [ self.batch_size ]*nbatches + [remainder]
-
-    def get_seed_for_batch(self,batch_number):
-        return self.seed + [(batch_number*2661+36979)%175000]
 
     def run_serial(self):
         summ, var = 0., 0.

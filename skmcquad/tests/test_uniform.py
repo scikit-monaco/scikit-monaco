@@ -161,13 +161,6 @@ class TestMCQuad(TestCase):
         with self.assertRaises(ValueError):
             mcquad(self.const,0,xl=[0.],xu=[1.])
 
-    def test_wrong_seed(self):
-        """
-        Raise a TypeError if seed is not a list.
-        """
-        with self.assertRaises(TypeError):
-            mcquad(self.const,2000,xl=[0.],xu=[1.],seed=1234)
-
     def test_seed(self):
         """
         Test same seed -> same result.
