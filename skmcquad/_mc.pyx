@@ -67,6 +67,24 @@ cdef run_integral(object f,int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts,
     sd = sqrt(sum2-summ**2/npts_float)/npts_float
     return average, sd
 
+def integrate_points(f, pts, double weight=1.0, object args=()):
+    cdef:
+        int dim, npoints
+        np.ndarray[DOUBLE,ndim=2] points
+
+    if np.rank(pts) == 1:
+        dim = 1
+        npoints = len(pts)
+        points = <np.ndarray[DOUBLE,ndim=2]> pts
+        assert pts.shape == (npoints,1)
+    else:
+        if not np.rank(pts) == 2:
+            raise ValueError(
+                    "Pts must be a rank-2 array: (npoints,dim).")
+        points = <np.ndarray[DOUBLE,ndim=2]> pts
+        npoints, dim = np.shape(points)
+    return run_integral(f,npoints,dim,points,weight,args)
+
 def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None):
     cdef :
         int dim = len(xl)
