@@ -2,6 +2,8 @@
 Reference Guide
 ===============
 
+.. currentmodule:: skmcquad
+
 Uniform sampling Monte-Carlo integration
 ----------------------------------------
 
@@ -11,4 +13,21 @@ integrate over more complicated volumes using the procedure described in
 integration region is large and the integrand changes rapidly over a small
 fraction of the total integration region.
 
-.. autofunction:: skmcquad.mcquad
+.. autofunction:: mcquad
+
+Importance sampling
+-------------------
+
+In importance sampling, the integrand is factored
+into the product of a probability density :math:`\rho(x)` and another function
+:math:`h(x)`:
+
+.. math::
+
+    f(x) = \rho(x) h(x)
+
+The integration proceeds by sampling from :math:`\rho(x)` and calculating
+:math:`h(x)` at each point. In `scikit-mcquad`, this is achieved with the
+`mcimport` function.
+
+.. autofunction:: mcimport 

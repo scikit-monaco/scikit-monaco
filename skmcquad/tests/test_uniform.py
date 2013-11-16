@@ -168,6 +168,15 @@ class TestMCQuad(TestCase):
         with self.assertRaises(TypeError):
             mcquad(self.const,2000,xl=[0.],xu=[1.],seed=1234)
 
+    def test_seed(self):
+        """
+        Test same seed -> same result.
+        """
+        npoints = 50000
+        res,error = mcquad(self.const,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
+        res2, error2 = mcquad(lambda x: x<1.0,npoints,xl=[0.],xu=[1.],seed=[1234,5678])
+        assert res == res2
+        assert error == error2
 
 
 def within_tol(a,b,tol):
