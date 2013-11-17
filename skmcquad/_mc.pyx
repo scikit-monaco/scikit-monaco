@@ -72,8 +72,8 @@ def integrate_points(f, pts, double weight=1.0, object args=()):
     if np.rank(pts) == 1:
         dim = 1
         npoints = len(pts)
-        points = <np.ndarray[DOUBLE,ndim=2]> pts
-        assert pts.shape == (npoints,1)
+        points = <np.ndarray[DOUBLE,ndim=2]> pts[:,None]
+        assert points.shape[0] == npoints and points.shape[1] == 1
     else:
         if not np.rank(pts) == 2:
             raise ValueError(
