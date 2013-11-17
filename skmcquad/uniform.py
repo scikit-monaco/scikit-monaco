@@ -27,7 +27,7 @@ class _MC_Integrator(_MC_Base):
 
     def make_integrator(self):
         f = self.f
-        batches = self.batches
+        batches = self.batch_sizes
         xl = self.xl
         xu = self.xu
         def func(batch_number):

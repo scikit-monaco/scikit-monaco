@@ -24,24 +24,32 @@ class _MC_Base(object):
 
     @property
     def nbatches(self):
-        return len(self.batches)
+        return len(self.batch_sizes)
 
     def create_batches(self):
-        if self.npoints % self.batch_size < 0.1*self.batch_size:
-            nbatches = self.npoints // self.batch_size-1
-            remainder = self.batch_size + self.npoints % self.batch_size
+        if self.npoints < self.batch_size:
+            # Form a single batch
+            self.batch_sizes = [ self.npoints ]
         else:
-            nbatches = self.npoints // self.batch_size
-            remainder = self.npoints % self.batch_size
-        return [ self.batch_size ]*nbatches + [remainder]
+            # More than one batch
+            if self.npoints % self.batch_size < 0.1*self.batch_size:
+                # Last batch would be too small: lump it with previous
+                # batch
+                nbatches = self.npoints // self.batch_size-1
+                remainder = self.batch_size + self.npoints % self.batch_size
+            else:
+                # Last batch is big enough
+                nbatches = self.npoints // self.batch_size
+                remainder = self.npoints % self.batch_size
+            self.batch_sizes = [ self.batch_size ]*nbatches + [remainder]
 
     def run_serial(self):
         summ, var = 0., 0.
         f = self.make_integrator()
-        for ibatch,batch in enumerate(self.batches):
+        for ibatch,batch_size in enumerate(self.batch_sizes):
             batch_sum, batch_sd = f(ibatch)
-            summ += batch_sum*batch
-            var += batch_sd**2*batch**2
+            summ += batch_sum*batch_size
+            var += batch_sd**2*batch_size**2
         return summ/self.npoints, np.sqrt(var)/self.npoints
 
     def run_parallel(self):
@@ -50,8 +58,9 @@ class _MC_Base(object):
         summ, sds = zip(*res)
         summ = np.array(summ)
         sds = np.array(sds)
-        batches = np.array(self.batches)
-        return sum(summ*batches)/self.npoints, np.sqrt(sum(batches**2*sds**2))/self.npoints
+        batch_sizes = np.array(self.batch_sizes)
+        return sum(summ*batch_sizes)/self.npoints, \
+                np.sqrt(sum(batch_sizes**2*sds**2))/self.npoints
 
     def run(self):
         if self.nprocs == 1:
