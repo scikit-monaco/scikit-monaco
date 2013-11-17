@@ -44,23 +44,23 @@ class _MC_Base(object):
             self.batch_sizes = [ self.batch_size ]*nbatches + [remainder]
 
     def run_serial(self):
-        summ, var = 0., 0.
+        summ, sum2 = 0., 0.
         f = self.make_integrator()
         for ibatch,batch_size in enumerate(self.batch_sizes):
-            batch_sum, batch_sd = f(ibatch)
-            summ += batch_sum*batch_size
-            var += batch_sd**2*batch_size**2
-        return summ/self.npoints, np.sqrt(var)/self.npoints
+            batch_sum, batch_sum2 = f(ibatch)
+            summ += batch_sum
+            sum2 += batch_sum2
+        return summ/self.npoints, \
+                np.sqrt(sum2-summ**2/self.npoints)/self.npoints
 
     def run_parallel(self):
         f = self.make_integrator()
         res = mp.parmap(f,range(self.nbatches),nprocs=self.nprocs)
-        summ, sds = zip(*res)
-        summ = np.array(summ)
-        sds = np.array(sds)
-        batch_sizes = np.array(self.batch_sizes)
-        return sum(summ*batch_sizes)/self.npoints, \
-                np.sqrt(sum(batch_sizes**2*sds**2))/self.npoints
+        summ, sum2s = zip(*res)
+        summ = np.array(summ).sum()
+        sum2 = np.array(sum2s).sum()
+        return summ/self.npoints, \
+                np.sqrt(sum2-summ**2/self.npoints)/self.npoints
 
     def run(self):
         if self.nprocs == 1:

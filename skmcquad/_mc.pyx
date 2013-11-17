@@ -62,10 +62,7 @@ cdef run_integral(object f,int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts,
         mc_kernel_noargs(f,npts,dim,pts,&summ,&sum2)
     summ *= weight
     sum2 *= weight**2
-    npts_float = <double>npts
-    average = summ/npts_float
-    sd = sqrt(sum2-summ**2/npts_float)/npts_float
-    return average, sd
+    return summ,sum2
 
 def integrate_points(f, pts, double weight=1.0, object args=()):
     cdef:
@@ -130,8 +127,8 @@ def integrate_importance(f,int npoints, distribution,
         points = distribution(size=npoints,**dist_kwargs).\
                 reshape((npoints,dim))
     #t1 = time.time() ; print "Time taken generating points: ",t1-t0
-    av,sd = run_integral(f,npoints,dim,points,weight,args)
+    summ,sum2 = run_integral(f,npoints,dim,points,weight,args)
     #t2 = time.time(); print "Time taken evaluating function: ",t2-t1
-    return av,sd
+    return summ,sum2
 
 
