@@ -39,6 +39,57 @@ class _Integrator_From_Points(_MC_Base):
 
 
 def integrate_from_points(f,points,args=(),nprocs=1,batch_size=None,weight=1.0):
+    """
+    Compute a definite integral over a set of points.
+
+    This routine evaluates `f` for each of the points passed, 
+    returning the average value and variance.
+
+    Parameters
+    ----------
+    f : function
+        A Python function or method to integrate. It must take an iterable
+        of length `d`, where `d` is the dimensionality of the integral,
+        as argument, and return a single value.
+    points : numpy array
+        A numpy array of shape ``(npoints,dim)``, where `npoints` is
+        the number of points and `dim` is the dimentionality of 
+        the integral.
+
+    Other Parameters
+    ----------------
+    nprocs : int >= 1, optional
+        Number of processes to use concurrently for the integration. Use 
+        nprocs=1 to force a serial evaluation of the integral. This defaults
+        to the value returned by multiprocessing.cpu_count().
+    batch_size : int, optional
+        The integration is batched, meaning that `batch_size` points are 
+        generated, the integration is run with these points, and the 
+        results are stored. Each batch is run by a single process. It may 
+        be useful to reduce `batch_size` if the dimensionality of the 
+        integration is very large.
+
+    Returns
+    -------
+    value : float
+        The estimate for the integral.
+    error : float
+        An estimate for the error (the integral has a 0.68 probability of
+        being within `error` of the correct answer).
+ 
+    Examples
+    --------
+
+    Integrate x*y over the unit square.
+
+    >>> from numpy.random import ranf
+    >>> npoints = int(1e5)
+    >>> points = ranf(2*npoints).reshape((npoints,2)) # Generate some points
+    >>> points.shape
+    (100000,2)
+    >>> integrate_from_points(lambda (x,y):x*y, points) 
+    (0.24885..., 0.00069...)
+    """
     return _Integrator_From_Points(
             f,points,args,nprocs,batch_size,weight).run()
 
