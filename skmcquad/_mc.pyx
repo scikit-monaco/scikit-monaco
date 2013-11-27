@@ -43,6 +43,38 @@ cdef mc_kernel_noargs(object f, int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts
     summ[0] = sum_tmp
     sum2[0] = sum2_tmp
 
+cdef mc_kernel_ret_object_no_args(object f, int npts, int dim, 
+        np.ndarray[DOUBLE,ndim=2] pts):
+    cdef :
+        int ipt, i
+        object val,summ,sum2
+        np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+    summ = 0.0
+    sum2 = 0.0
+    for ipt in range(npts):
+        for i in range(dim):
+            pt[i] = pts[ipt,i]
+        val = f(pt)
+        summ += val
+        sum2 += val*val
+    return summ,sum2
+
+cdef mc_kernel_ret_object(object f, int npts, int dim, 
+        np.ndarray[DOUBLE,ndim=2] pts, object args):
+    cdef :
+        int ipt, i
+        object val,summ,sum2
+        np.ndarray[DOUBLE,ndim=1] pt = np.empty((dim,))
+    summ = 0.0
+    sum2 = 0.0
+    for ipt in range(npts):
+        for i in range(dim):
+            pt[i] = pts[ipt,i]
+        val = f(pt,*args)
+        summ += val
+        sum2 += val*val
+    return summ,sum2
+
 cdef void generate_points(int npoints, int dim, 
         np.ndarray[DOUBLE,ndim=1] xl, 
         np.ndarray[DOUBLE,ndim=1] xu, 
@@ -55,14 +87,39 @@ cdef void generate_points(int npoints, int dim,
 cdef run_integral(object f,int npts, int dim, np.ndarray[DOUBLE,ndim=2] pts, 
         double weight, object args):
     cdef :
-        double summ, sum2, npts_float, average, sd
-    if len(args) > 0:
-        mc_kernel(f,npts,dim,pts,args,&summ,&sum2)
+        double summ_double, sum2_double, first_val_double, npts_float 
+        bint ret_object
+        object summ_object, sum2_object, first_val_object
+
+    # Do one call to get return type.
+    first_val_object = f(pts[-1,:],*args)
+    try:
+        first_val_double = float(first_val_object)
+        ret_object = False
+    except TypeError: # object cannot be cast to float
+        ret_object = True
+
+    # Run the bulk of the integration.
+    if not ret_object:
+        if len(args) > 0:
+            mc_kernel(f,npts-1,dim,pts,args,&summ_double,&sum2_double)
+        else:
+            mc_kernel_noargs(f,npts-1,dim,pts,&summ_double,&sum2_double)
+        summ_object = <object>summ_double
+        sum2_object = <object>sum2_double
     else:
-        mc_kernel_noargs(f,npts,dim,pts,&summ,&sum2)
-    summ *= weight
-    sum2 *= weight**2
-    return summ,sum2
+        if len(args) > 0:
+            summ_object, sum2_object = mc_kernel_ret_object(
+                    f,npts-1,dim,pts,args)
+        else:
+            summ_object, sum2_object = mc_kernel_ret_object_no_args(
+                    f,npts-1,dim,pts)
+
+    summ_object += first_val_object
+    sum2_object += first_val_object*first_val_object
+    summ_object *= weight
+    sum2_object *= weight**2
+    return summ_object,sum2_object
 
 def integrate_points(f, pts, double weight=1.0, object args=()):
     cdef:

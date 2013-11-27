@@ -50,10 +50,9 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     Parameters
     ----------
     f : function
-        A Python function or method to integrate. It must taken an
-        iterable of length `d` as its first argument, where `d`
-        is the dimensionality of the integral, and return a 
-        single value.
+        A Python function or method to integrate. It must take an iterable
+        of length `d`, where `d` is the dimensionality of the integral,
+        as argument, and return either a float or a numpy array.
     npoints : int >= 2
         Number of points to use in the integration.
     distribution : function
@@ -93,10 +92,12 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
 
     Returns
     -------
-    value : float
-        The estimate for the integral.
-    error : float
-        The standard deviation of the result.
+    value : float or numpy array
+        The estimate for the integral. If the integrand returns an
+        array, this will be an array of the same shape.
+    error : float or numpy array
+        The standard deviation of the result. If the integrand 
+        returns an array, this will be an array of the same shape.
 
     Examples
     --------
@@ -132,8 +133,20 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     >>> npoints = 1e5
     >>> result, error = mcimport(f,npoints,distribution)
     >>> result*8,error*8
-    (3.8096..., 0.00796...)
+    (3.8096..., 0.0248...)
 
+    The integrand can also return an array. Suppose that we want to 
+    calculate the integrals of both ``exp(z^2)`` and ``z**2*exp(z^2)``
+    in the unit sphere. We choose the same distribution as in the 
+    previous example, but the function that we sum is now:
+
+    >>> f = lambda (x,y,z): (np.sqrt(2.*np.pi)*(z>0.)*(x**2+y**2+z**2<1.)*
+    ...     np.array((1.,z**2)))
+    >>> result, error = mcimport(f,npoints,distribution)
+    >>> result*8
+     array([ 3.81408558,  0.67236413])
+    >>> error*8
+    array([ 0.02488709,  0.00700179])
     """
     return _MC_Importance_Integrator(f,npoints,distribution,args=args,
             dist_kwargs=dist_kwargs,rng=rng,nprocs=nprocs,

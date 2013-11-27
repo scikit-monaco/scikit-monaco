@@ -50,7 +50,7 @@ def integrate_from_points(f,points,args=(),nprocs=1,batch_size=None,weight=1.0):
     f : function
         A Python function or method to integrate. It must take an iterable
         of length `d`, where `d` is the dimensionality of the integral,
-        as argument, and return a single value.
+        as argument, and return either a float or a numpy array.
     points : numpy array
         A numpy array of shape ``(npoints,dim)``, where `npoints` is
         the number of points and `dim` is the dimentionality of 
@@ -71,11 +71,12 @@ def integrate_from_points(f,points,args=(),nprocs=1,batch_size=None,weight=1.0):
 
     Returns
     -------
-    value : float
-        The estimate for the integral.
-    error : float
-        An estimate for the error (the integral has a 0.68 probability of
-        being within `error` of the correct answer).
+    value : float or numpy array.
+        The estimate for the integral. If the integrand returns an array,
+        this will be an array of the same shape.
+    error : float or numpy array
+        An estimate for the error (the integral has, approximately, a 0.68 
+        probability of being within `error` of the correct answer).
  
     Examples
     --------

@@ -141,3 +141,37 @@ To give a concrete example, let's take :math:`f(x,y) = y^2`.
     # (9.9161745618624231, 0.049412524880183335)
 
 
+Array-like integrands
+=====================
+
+We are not limited to integrands that return floats. We can have integrands
+that return array objects. This can be useful for calculating several integrals
+at the same time. For instance, let's say that we want to calculate
+both :math:`x^2` and :math:`y^2` in the volume :math:`\Omega` described in the
+previous section. We can do both these integrals simultaneously.
+
+.. code:: python
+
+    import numpy as np
+    
+    def f((x,y)):
+        """ f((x,y,)) now returns an array with both integrands. """
+        return np.array((x**2,y**2))
+    
+    def g((x,y)):
+        r = np.sqrt(x**2 + y**2)
+        if r >= 2. and r <= 3. and x >= 1. and y >= -2.:
+            # (x,y) in correct volume
+            return f((x,y))
+        else:
+            return np.zeros((2,))
+
+    result, error = mcquad(g,npoints=100000,xl=[1.,-2.],xu=[3.,3.],nprocs=4)
+    print result
+    # [ 23.27740875   9.89103493] 
+    print error
+    # [ 0.08437993  0.04938343]
+
+We see that if the integrand returns an array, :func:`mcquad` will return two
+arrays of the same shape, the first corresponding to the values of the
+integrand and the second to the error in those values.

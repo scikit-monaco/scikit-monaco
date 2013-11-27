@@ -1,6 +1,6 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, build_err_msg
+from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 from numpy.random import exponential,uniform
 
 from skmcquad import mcimport
@@ -117,6 +117,41 @@ class TestMCImport(TestCase):
         self.run_all(lambda x:cval*(x<1.0), npoints, exponential,
                 exp_integral,cval*exp_integral-exp_integral**2,
                 dist_kwargs=dict(scale=cval))
+
+    def test_ret_arr(self):
+        """
+        Test an integrand that returns an array.
+        """
+        func = lambda x: np.array((x**2,x**3))
+        npoints = 2000
+        (res_sq, res_cb), (sd_sq, sd_cb) = mcimport(func,npoints,distribution=exponential,
+                nprocs=1, seed=123456)
+        res_sq2, sd_sq2 = mcimport(lambda x: x**2,npoints,distribution=exponential,
+                nprocs=1,seed=123456)
+        res_cb2, sd_cb2 = mcimport(lambda x: x**3,npoints,distribution=exponential,
+                nprocs=1,seed=123456)
+        assert_almost_equal(res_sq, res_sq2)
+        assert_almost_equal(res_cb, res_cb2)
+        assert_almost_equal(sd_sq, sd_sq2)
+        assert_almost_equal(sd_sq, sd_sq2)
+
+    def test_ret_arr_args(self):
+        """
+        Test an integrand that returns an array with an argument.
+        """
+        func = lambda x, a,b : np.array((a*x**2,b*x**3))
+        npoints = 2000
+        aval, bval = 4.,5.
+        (res_sq, res_cb), (sd_sq, sd_cb) = mcimport(func,npoints,distribution=exponential,
+                nprocs=1,seed=123456,args=(aval,bval))
+        res_sq2, sd_sq2 = mcimport(lambda x,a: a*x**2,npoints,distribution=exponential,
+                nprocs=1,seed=123456,args=(aval,))
+        res_cb2, sd_cb2 = mcimport(lambda x,b: b*x**3,npoints,distribution=exponential,
+                nprocs=1,seed=123456,args=(bval,))
+        assert_almost_equal(res_sq, res_sq2)
+        assert_almost_equal(res_cb, res_cb2)
+        assert_almost_equal(sd_sq, sd_sq2)
+        assert_almost_equal(sd_sq, sd_sq2)
 
     def test_seed(self):
         """

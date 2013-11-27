@@ -1,6 +1,6 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, build_err_msg
+from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 import numpy.random
 
 from skmcquad import integrate_from_points
@@ -80,6 +80,38 @@ class TestIntegrateFromPoints(TestCase):
                 args=(aval,),nprocs=2,batch_size=npoints/2)
         assert_within_tol(res_parallel,expected_res,1e-10)
         assert_within_tol(err_parallel,expected_err,1e-10)
+
+    def test_ret_arr(self):
+        """ Test an integrand that returns an array """
+        npoints = 2000
+        points = numpy.random.ranf(size=npoints)
+        func = lambda x: np.array((x**2,x**3))
+        (res_sq, res_cb), (sd_sq, sd_cb) = integrate_from_points(func,points,nprocs=1)
+        res_sq2, sd_sq2 = integrate_from_points(lambda x: x**2,points,nprocs=1)
+        res_cb2, sd_cb2 = integrate_from_points(lambda x: x**3,points,nprocs=1) 
+        assert_almost_equal(res_sq, res_sq2,decimal=12)
+        assert_almost_equal(res_cb, res_cb2,decimal=12)
+        assert_almost_equal(sd_sq, sd_sq2,decimal=12)
+        assert_almost_equal(sd_cb, sd_cb2,decimal=12)
+
+    def test_ret_arr_args(self):
+        """
+        Test an integrand that returns an array with an argument.
+        """
+        npoints = 1000
+        points = numpy.random.ranf(size=npoints)
+        func = lambda x,a,b: np.array((a*x**2,b*x**3))
+        aval, bval = 4.,5.
+        (res_sq, res_cb), (sd_sq, sd_cb) = integrate_from_points(func,points,nprocs=1,
+                args=(aval,bval))
+        res_sq2, sd_sq2 = integrate_from_points(lambda x,a: a*x**2,points,nprocs=1,
+                args=(aval,))
+        res_cb2, sd_cb2 = integrate_from_points(lambda x,b: b*x**3,points,nprocs=1,
+                args=(bval,))
+        assert_almost_equal(res_sq, res_sq2,decimal=12)
+        assert_almost_equal(res_cb, res_cb2,decimal=12)
+        assert_almost_equal(sd_sq, sd_sq2,decimal=12)
+        assert_almost_equal(sd_cb, sd_cb2,decimal=12)
 
     def test_weight(self):
         """ a*x**2, using a weight. """
