@@ -2,7 +2,7 @@
 Reference Guide
 ===============
 
-.. currentmodule:: skmcquad
+.. currentmodule:: skmonaco
 
 Uniform sampling Monte-Carlo integration
 ----------------------------------------
@@ -27,7 +27,7 @@ into the product of a probability density :math:`\rho(x)` and another function
     f(x) = \rho(x) h(x)
 
 The integration proceeds by sampling from :math:`\rho(x)` and calculating
-:math:`h(x)` at each point. In `scikit-mcquad`, this is achieved with the
+:math:`h(x)` at each point. In `scikit-monaco`, this is achieved with the
 `mcimport` function.
 
 .. autofunction:: mcimport 

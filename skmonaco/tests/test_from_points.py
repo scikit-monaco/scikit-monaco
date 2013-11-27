@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 import numpy.random
 
-from skmcquad import integrate_from_points
+from skmonaco import integrate_from_points
 
 class TestIntegrateFromPoints(TestCase):
 

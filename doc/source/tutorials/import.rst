@@ -2,7 +2,7 @@
 Importance sampling
 ===================
 
-.. currentmodule:: skmcquad
+.. currentmodule:: skmonaco
 
 The techniques described in the previous sections work well if the 
 variance of the integrand is similar over the whole integration volume. As a counter-example, consider the integral :math:`\int_{-\infty}^\infty \cos(x)^2 e
@@ -14,7 +14,7 @@ To use importance sampling, we need to factor the integrand :math:`f(x)` into a 
 
 .. code:: python
     
-    >>> from skmcquad import mcimport
+    >>> from skmonaco import mcimport
     >>> from numpy.random import normal
     >>> from math import cos,sqrt,pi
     >>> result, error = mcimport(lambda x: sqrt(2.*pi)*cos(x)**2, # h(x)

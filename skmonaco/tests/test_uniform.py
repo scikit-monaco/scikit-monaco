@@ -2,7 +2,7 @@
 import numpy as np
 from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 
-from skmcquad.uniform import mcquad
+from skmonaco import mcquad
 
 HALF_ROOT_PI = 0.5*np.sqrt(np.pi)
 

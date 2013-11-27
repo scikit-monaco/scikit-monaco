@@ -3,7 +3,7 @@ import numpy as np
 from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 from numpy.random import exponential,uniform
 
-from skmcquad import mcimport
+from skmonaco import mcimport
 
 class TestMCImport(TestCase):
     """

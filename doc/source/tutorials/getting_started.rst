@@ -2,9 +2,9 @@
 Getting started
 ===============
 
-.. currentmodule:: skmcquad
+.. currentmodule:: skmonaco
 
-**Scikit-mcquad** is a toolkit for Monte Carlo integration. It is
+**Scikit-monaco** is a toolkit for Monte Carlo integration. It is
 written in Cython for efficiency and includes parallelism to take
 advantage of processors with multiple core.
 
@@ -13,7 +13,7 @@ This could be computed using :func:`mcquad`.
 
 .. code:: python
 
-    >>> from skmcquad import mcquad
+    >>> from skmonaco import mcquad
     >>> mcquad(lambda (x,y): x*y, # integrand
     ...     xl=[0.,0.],xu=[1.,1.], # lower and upper limits of integration
     ...     npoints=100000 # number of points
@@ -46,7 +46,7 @@ product of two Gaussians with exponential factors ``alpha`` and ``beta``:
 .. code:: python
     
     >>> import numpy as np
-    >>> from skmcquad import mcquad
+    >>> from skmonaco import mcquad
     >>> f = lambda (x,y),alpha,beta: np.exp(-alpha*x**2)*np.exp(-beta*y**2)
     >>> alpha = 1.0
     >>> beta = 2.0
@@ -60,7 +60,7 @@ ipython session to take advantage of their timing routines.
 .. code:: python
 
     >>> from math import sin,cos
-    >>> from skmcquad import mcquad
+    >>> from skmonaco import mcquad
     >>> f = lambda x,y: sin(x)*cos(y)
     >>> %timeit mcquad(f,xl=[0.,0.],xu=[1.,1.],npoints=1e6,nprocs=1) 
     1 loops, best of 3: 2.26 s per loop

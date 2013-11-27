@@ -29,7 +29,7 @@ def configuration(parent_package="",top_path=None):
                        delegate_options_to_subpackages=True,
                        quiet=True)
 
-    config.add_subpackage('skmcquad')
+    config.add_subpackage('skmonaco')
     
     return config
 
