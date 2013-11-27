@@ -49,7 +49,7 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
     f : function
         A Python function or method to integrate. It must take an iterable
         of length `d`, where `d` is the dimensionality of the integral,
-        as argument, and return a single value.
+        as argument, and return either a float or a numpy array.
     npoints : int
         Number of points to use in integration.
     xl, xu : iterable
@@ -79,11 +79,12 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
 
     Returns
     -------
-    value : float
-        The estimate for the integral.
-    error : float
-        An estimate for the error (the integral has a 0.68 probability of
-        being within `error` of the correct answer).
+    value : float or numpy array.
+        The estimate for the integral. If the integrand returns an array,
+        this will be an array of the same shape.
+    error : float or numpy array
+        An estimate for the error (the integral has, approximately, a 0.68 
+        probability of being within `error` of the correct answer).
 
 
     Examples
@@ -102,6 +103,17 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
     (0.78550..., 0.0029024...)
     >>> np.pi/4.
     0.7853981633974483
+
+    The integrand can return an array. This can be used to calculate 
+    several integrals at once.
+
+    >>> result, error = mcquad(
+    ...      lambda x: np.exp(-x**2)*np.array((1.,x**2,x**4,x**6)),
+    ...     npoints=20000, xl=[0.], xu=[1.])
+    >>> result
+    array([ 0.7464783 ,  0.18945015,  0.10075603,  0.06731908])
+    >>> error
+    array([ 0.0014275 ,  0.00092622,  0.00080145,  0.00069424])
     """
     return _MC_Integrator(f,npoints,args=args,
             xl=xl,xu=xu,rng=rng,nprocs=nprocs,seed=seed,batch_size=batch_size).run()
