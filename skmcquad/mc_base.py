@@ -4,23 +4,12 @@ from __future__ import division
 import numpy as np
 import multiprocessing
 import mp
-import time
-import os
 
 class _MC_Base(object):
 
     default_batch_size = 10000
 
-    def __init__(self,rng,nprocs,seed,batch_size):
-        self.rng = rng
-        if seed is None:
-            self.seed = [ time.time(), os.getpid() ]
-        else:
-            try:
-                seed + []
-            except TypeError:
-                raise TypeError("Seed must be a list.")
-            self.seed = seed
+    def __init__(self,nprocs,batch_size):
         if nprocs is None:
             self.nprocs = multiprocessing.cpu_count()
         else:
@@ -35,37 +24,43 @@ class _MC_Base(object):
 
     @property
     def nbatches(self):
-        return len(self.batches)
+        return len(self.batch_sizes)
 
     def create_batches(self):
-        if self.npoints % self.batch_size < 0.1*self.batch_size:
-            nbatches = self.npoints // self.batch_size-1
-            remainder = self.batch_size + self.npoints % self.batch_size
+        if self.npoints < self.batch_size:
+            # Form a single batch
+            self.batch_sizes = [ self.npoints ]
         else:
-            nbatches = self.npoints // self.batch_size
-            remainder = self.npoints % self.batch_size
-        return [ self.batch_size ]*nbatches + [remainder]
-
-    def get_seed_for_batch(self,batch_number):
-        return self.seed + [(batch_number*2661+36979)%175000]
+            # More than one batch
+            if self.npoints % self.batch_size < 0.1*self.batch_size:
+                # Last batch would be too small: lump it with previous
+                # batch
+                nbatches = self.npoints // self.batch_size-1
+                remainder = self.batch_size + self.npoints % self.batch_size
+            else:
+                # Last batch is big enough
+                nbatches = self.npoints // self.batch_size
+                remainder = self.npoints % self.batch_size
+            self.batch_sizes = [ self.batch_size ]*nbatches + [remainder]
 
     def run_serial(self):
-        summ, var = 0., 0.
+        summ, sum2 = 0., 0.
         f = self.make_integrator()
-        for ibatch,batch in enumerate(self.batches):
-            batch_sum, batch_sd = f(ibatch)
-            summ += batch_sum*batch
-            var += batch_sd**2*batch**2
-        return summ/self.npoints, np.sqrt(var)/self.npoints
+        for ibatch,batch_size in enumerate(self.batch_sizes):
+            batch_sum, batch_sum2 = f(ibatch)
+            summ += batch_sum
+            sum2 += batch_sum2
+        return summ/self.npoints, \
+                np.sqrt(sum2-summ**2/self.npoints)/self.npoints
 
     def run_parallel(self):
         f = self.make_integrator()
         res = mp.parmap(f,range(self.nbatches),nprocs=self.nprocs)
-        summ, sds = zip(*res)
-        summ = np.array(summ)
-        sds = np.array(sds)
-        batches = np.array(self.batches)
-        return sum(summ*batches)/self.npoints, np.sqrt(sum(batches**2*sds**2))/self.npoints
+        summ, sum2s = zip(*res)
+        summ = np.array(summ).sum()
+        sum2 = np.array(sum2s).sum()
+        return summ/self.npoints, \
+                np.sqrt(sum2-summ**2/self.npoints)/self.npoints
 
     def run(self):
         if self.nprocs == 1:

@@ -127,6 +127,16 @@ class TestMCImport(TestCase):
         res2, error2 = mcimport(lambda x: x<1.0,npoints,exponential,seed=[1234,5678])
         assert res == res2
         assert error == error2
+
+    def test_seed_different(self):
+        """
+        Test different seed -> different result.
+        """
+        npoints = 50000
+        res,error = mcimport(lambda x: x<1.0,npoints,exponential,seed=[1234,5678])
+        res2, error2 = mcimport(lambda x: x<1.0,npoints,exponential,seed=[1235,5678])
+        assert res != res2
+        assert error != error2
                 
 
 #FIXME refactor

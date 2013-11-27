@@ -11,6 +11,7 @@ This module provides a toolkit for Monte Carlo integration.
 
 from uniform import * 
 from importance import *
+from from_pts import *
 
 from numpy.testing import Tester
 test = Tester().test

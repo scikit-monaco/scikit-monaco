@@ -4,6 +4,7 @@ import numpy.random
 
 from _mc import integrate_uniform
 from mc_base import _MC_Base
+import random_utils
 
 __all__ = [ "mcquad" ]
 
@@ -15,21 +16,22 @@ class _MC_Integrator(_MC_Base):
         self.npoints = int(npoints)
         self.xl = np.array(xl)
         self.xu = np.array(xu)
+        self.rng = rng
         self.args = args
         if len(self.xl) != len(self.xu):
             raise ValueError("'xl' and 'xu' must be the same length.")
         if self.npoints < 2:
             raise ValueError("'npoints' must be >= 2.")
-        _MC_Base.__init__(self,rng,nprocs,seed,batch_size)
+        self.seed_generator = random_utils.SeedGenerator(seed)
+        _MC_Base.__init__(self,nprocs,batch_size)
 
     def make_integrator(self):
         f = self.f
-        batches = self.batches
+        batches = self.batch_sizes
         xl = self.xl
         xu = self.xu
-        seed_gen = self.get_seed_for_batch
         def func(batch_number):
-            seed = seed_gen(batch_number)
+            seed = self.seed_generator.get_seed_for_batch(batch_number)
             return integrate_uniform(f,batches[batch_number],
                     xl,xu,args=self.args,rng=self.rng,seed=seed)
         return func

@@ -31,3 +31,8 @@ The integration proceeds by sampling from :math:`\rho(x)` and calculating
 `mcimport` function.
 
 .. autofunction:: mcimport 
+
+Utility functions
+-----------------
+
+.. autofunction:: integrate_from_points

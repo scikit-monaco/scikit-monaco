@@ -4,6 +4,7 @@ import numpy.random
 
 from _mc import integrate_importance
 from mc_base import _MC_Base
+import random_utils
 
 __all__ = [ "mcimport" ]
 
@@ -19,7 +20,9 @@ class _MC_Importance_Integrator(_MC_Base):
         self.ndims = self.get_ndims()
         self.weight = weight
         self.args = args
-        _MC_Base.__init__(self,rng,nprocs,seed,batch_size)
+        self.rng = rng
+        self.seed_generator = random_utils.SeedGenerator(seed)
+        _MC_Base.__init__(self,nprocs,batch_size)
 
     def get_ndims(self):
         generated_points = self.distribution(size=1,**self.dist_kwargs)
@@ -27,8 +30,8 @@ class _MC_Importance_Integrator(_MC_Base):
 
     def make_integrator(self):
         def func(batch_number):
-            seed = self.get_seed_for_batch(batch_number)
-            return integrate_importance(self.f,self.batches[batch_number],
+            seed = self.seed_generator.get_seed_for_batch(batch_number)
+            return integrate_importance(self.f,self.batch_sizes[batch_number],
                     self.distribution,self.args,self.rng,seed,
                     self.dist_kwargs,self.weight)
         return func
