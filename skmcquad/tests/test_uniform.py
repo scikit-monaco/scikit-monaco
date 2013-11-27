@@ -1,6 +1,6 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, build_err_msg
+from numpy.testing import TestCase, run_module_suite, build_err_msg, assert_almost_equal
 
 from skmcquad.uniform import mcquad
 
@@ -140,6 +140,39 @@ class TestMCQuad(TestCase):
         variance = 4.*self.prod_variance(1)
         self.run_all(func,npoints,a*0.5,variance,xl=[0.],xu=[1.],args=(a,))
 
+    def test_ret_arr(self):
+        """
+        Test an integrand that returns an array.
+        """
+        func = lambda x: np.array((x**2,x**3))
+        npoints = 2000
+        (res_sq, res_cb), (sd_sq, sd_cb) = mcquad(func,npoints,[0.],[1.],nprocs=1,
+                seed=123456)
+        res_sq2, sd_sq2 = mcquad(lambda x: x**2,npoints,[0.],[1.],nprocs=1,seed=123456)
+        res_cb2, sd_cb2 = mcquad(lambda x: x**3,npoints,[0.],[1.],nprocs=1,seed=123456)
+        assert_almost_equal(res_sq, res_sq2)
+        assert_almost_equal(res_cb, res_cb2)
+        assert_almost_equal(sd_sq, sd_sq2)
+        assert_almost_equal(sd_cb, sd_cb2)
+
+    def test_ret_arr_args(self):
+        """
+        Test an integrand that returns an array with an argument.
+        """
+        func = lambda x, a,b : np.array((a*x**2,b*x**3))
+        npoints = 2000
+        aval, bval = 4.,5.
+        (res_sq, res_cb), (sd_sq, sd_cb) = mcquad(func,npoints,[0.],[1.],nprocs=1,
+                seed=123456,args=(aval,bval))
+        res_sq2, sd_sq2 = mcquad(lambda x,a: a*x**2,npoints,[0.],[1.],nprocs=1,
+                seed=123456,args=(aval,))
+        res_cb2, sd_cb2 = mcquad(lambda x,b: b*x**3,npoints,[0.],[1.],nprocs=1,
+                seed=123456,args=(bval,))
+        assert_almost_equal(res_sq, res_sq2)
+        assert_almost_equal(res_cb, res_cb2)
+        assert_almost_equal(sd_sq, sd_sq2)
+        assert_almost_equal(sd_cb, sd_cb2)
+        
     def test_wrong_xl(self):
         """
         Raise a ValueError if len(xl) != len(xu).
