@@ -57,8 +57,8 @@ class _MC_Base(object):
         f = self.make_integrator()
         res = mp.parmap(f,range(self.nbatches),nprocs=self.nprocs)
         summ, sum2s = zip(*res)
-        summ = np.array(summ).sum()
-        sum2 = np.array(sum2s).sum()
+        summ = np.array(summ).sum(axis=0)
+        sum2 = np.array(sum2s).sum(axis=0)
         return summ/self.npoints, \
                 np.sqrt(sum2-summ**2/self.npoints)/self.npoints
 

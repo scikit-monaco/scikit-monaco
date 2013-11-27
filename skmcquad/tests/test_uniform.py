@@ -155,6 +155,24 @@ class TestMCQuad(TestCase):
         assert_almost_equal(sd_sq, sd_sq2)
         assert_almost_equal(sd_cb, sd_cb2)
 
+    def test_ret_arr_parallel(self):
+        """
+        Test an integrand that returns an array: parallel implementation.
+        """
+        func = lambda x: np.array((x**2,x**3))
+        npoints = 5000
+        nprocs = 2
+        (res_sq, res_cb), (sd_sq, sd_cb) = mcquad(func,npoints,[0.],[1.],nprocs=nprocs,
+                seed=123456)
+        res_sq2, sd_sq2 = mcquad(lambda x: x**2,npoints,[0.],[1.],
+                nprocs=nprocs,seed=123456)
+        res_cb2, sd_cb2 = mcquad(lambda x: x**3,npoints,[0.],[1.],
+                nprocs=nprocs,seed=123456)
+        assert_almost_equal(res_sq, res_sq2)
+        assert_almost_equal(res_cb, res_cb2)
+        assert_almost_equal(sd_sq, sd_sq2)
+        assert_almost_equal(sd_cb, sd_cb2)
+
     def test_ret_arr_args(self):
         """
         Test an integrand that returns an array with an argument.
