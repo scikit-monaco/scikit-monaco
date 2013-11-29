@@ -10,6 +10,7 @@ Scikit-Monaco Documentation
    :maxdepth: 2
 
    tutorials.rst
+   CONTRIBUTING.rst
    api.rst
 
 
