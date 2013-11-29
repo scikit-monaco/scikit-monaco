@@ -2,6 +2,20 @@
 import os
 import sys
 
+DISTNAME = "scikit-monaco"
+DESCRIPTION = "Python modules for Monte Carlo integration"
+LONG_DESCRIPTION = ""
+MAINTAINER = "Pascal Bugnion"
+MAINTAINER_EMAIL = "pascal@bugnion.org"
+URL = ""
+LICENSE = "new BSD"
+DOWNLOAD_URL = ""
+
+import skmonaco
+
+VERSION = skmonaco.__version__
+
+
 # For some commands, use setuptools.
 if len(set(('develop', 'release', 'bdist_egg', 'bdist_rpm',
            'bdist_wininst', 'install_egg_info', 'build_sphinx',
@@ -34,7 +48,34 @@ def configuration(parent_package="",top_path=None):
     return config
 
 def setup_package():
-    metadata = dict(**extra_setuptools_args)
+    metadata = dict(
+            name=DISTNAME,
+            maintainer=MAINTAINER,
+            maintainer_email=MAINTAINER_EMAIL,
+            description=DESCRIPTION,
+            license=LICENSE,
+            url=URL,
+            version=VERSION,
+            download_url=DOWNLOAD_URL,
+            long_description=LONG_DESCRIPTION,
+            classifiers=[
+                'Intended Audience :: Science/Research',
+                'Intended Audience :: Developers',
+                'Intended Audience :: Financial and Insurance Industry',
+                'License :: OSI Approved :: BSD License',
+                'Programming Language :: Cython',
+                'Programming Language :: Python',
+                'Topic :: Software Development',
+                'Topic :: Scientific/Engineering',
+                'Operating System :: POSIX',
+                'Operating System :: Unix',
+                'Operating System :: MacOS',
+                'Programming Language :: Python :: 2',
+                'Programming Language :: Python :: 2.6',
+                'Programming Language :: Python :: 2.7',
+                'Programming Language :: Python :: 3',
+                'Programming Language :: Python :: 3.3'],
+            **extra_setuptools_args)
 
     if (len(sys.argv) >= 2 and
             ("--help" in sys.argv[1:] or
