@@ -4,7 +4,7 @@ import sys
 
 DISTNAME = "scikit-monaco"
 DESCRIPTION = "Python modules for Monte Carlo integration"
-LONG_DESCRIPTION = ""
+LONG_DESCRIPTION = open("README.rst").read()
 MAINTAINER = "Pascal Bugnion"
 MAINTAINER_EMAIL = "pascal@bugnion.org"
 URL = ""
