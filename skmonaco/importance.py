@@ -20,7 +20,10 @@ class _MC_Importance_Integrator(_MC_Base):
         self.ndims = self.get_ndims()
         self.weight = weight
         self.args = args
-        self.rng = rng
+        if rng is None:
+            self.rng = numpy.random
+        else:
+            self.rng = rng
         self.seed_generator = random_utils.SeedGenerator(seed)
         _MC_Base.__init__(self,nprocs,batch_size)
 
@@ -38,7 +41,7 @@ class _MC_Importance_Integrator(_MC_Base):
 
 
 def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
-        rng=numpy.random,nprocs=None,seed=None,batch_size=None,weight=1.0):
+        rng=None,nprocs=1,seed=None,batch_size=None,weight=1.0):
     """
     Compute a definite integral, sampling from a non-uniform distribution.
 
