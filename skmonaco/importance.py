@@ -1,10 +1,12 @@
 
+from __future__ import division, absolute_import
+
 import numpy as np
 import numpy.random
 
-from _mc import integrate_importance
-from mc_base import _MC_Base
-import random_utils
+from . import _mc
+from .mc_base import _MC_Base
+import skmonaco.random_utils as random_utils
 
 __all__ = [ "mcimport" ]
 
@@ -34,7 +36,7 @@ class _MC_Importance_Integrator(_MC_Base):
     def make_integrator(self):
         def func(batch_number):
             seed = self.seed_generator.get_seed_for_batch(batch_number)
-            return integrate_importance(self.f,self.batch_sizes[batch_number],
+            return _mc.integrate_importance(self.f,self.batch_sizes[batch_number],
                     self.distribution,self.args,self.rng,seed,
                     self.dist_kwargs,self.weight)
         return func

@@ -1,9 +1,9 @@
 
-from __future__ import division
+from __future__ import division, absolute_import
 
 import numpy as np
 import multiprocessing
-import mp
+import skmonaco.mp as mp
 
 class _MC_Base(object):
 
@@ -17,7 +17,7 @@ class _MC_Base(object):
         if batch_size is None:
             self.batch_size = self.default_batch_size
         else:
-            self.batch_size = batch_size
+            self.batch_size = int(batch_size)
             if self.batch_size < 1:
                 raise ValueError("'batch_size' must be >= 1.")
         self.batches = self.create_batches()

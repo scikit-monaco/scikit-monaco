@@ -13,10 +13,17 @@ This module provides a toolkit for Monte Carlo integration.
 
 __version__ = "0.1-git"
 
-from uniform import * 
-from importance import *
-from from_pts import *
+try:
+    __SKMONACO_SETUP__
+except NameError:
+    # skmonaco is not being run from the setup script.
+    __SKMONACO_SETUP__ = False
 
-from numpy.testing import Tester
-test = Tester().test
-bench = Tester().bench
+if not __SKMONACO_SETUP__ :
+    from .uniform import * 
+    from .importance import *
+    from .from_pts import *
+
+    from numpy.testing import Tester
+    test = Tester().test
+    bench = Tester().bench

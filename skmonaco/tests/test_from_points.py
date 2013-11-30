@@ -56,23 +56,23 @@ class TestIntegrateFromPoints(TestCase):
     def test_x_squared_2d(self):
         """ x**2 + 3*y**2 """
         points = np.array([(1.,2.),(3.,5.),(6.,7.)])
-        self.run_all(lambda (x,y): x**2 + 3.*y**2,points,
+        self.run_all(lambda xs: xs[0]**2 + 3.*xs[1]**2,points,
                 serial_only=True)
 
     def test_x_squared_2db(self):
         """ x**2 + 3*y**2, both serial and parallel. """
         npoints = 20000
         points = numpy.random.ranf(size=2*npoints).reshape(npoints,2)
-        self.run_all(lambda (x,y):x**2 + 3*y**2,points)
+        self.run_all(lambda xs:xs[0]**2 + 3*xs[1]**2,points)
 
     def test_args(self):
         """ x**2 + a*y**2, passing a as an argument. """
         npoints = 1000
         points = numpy.random.ranf(size=2*npoints).reshape(npoints,2)
         aval = 3.0
-        f = lambda (x,y),a: x**2 + a*y**2
+        f = lambda xs,a: xs[0]**2 + a*xs[1]**2
         expected_res, expected_err = self.calc_res_err(
-                lambda (x,y):x**2 + aval*y**2,points)
+                lambda xs:xs[0]**2 + aval*xs[1]**2,points)
         res_serial, err_serial = integrate_from_points(f,points,
                 args=(aval,),nprocs=1)
         assert_within_tol(res_serial,expected_res,1e-10)

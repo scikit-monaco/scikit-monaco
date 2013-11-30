@@ -64,7 +64,7 @@ class TestMCImport(TestCase):
         e^-(x+y) for x,y = 0..1 with g(x) = e^-(x+y)
         """
         npoints = 2000
-        self.run_all(lambda (x,y):x<1.0 and y<1.0,npoints,
+        self.run_all(lambda xs:xs[0]<1.0 and xs[1]<1.0,npoints,
                 lambda size:(exponential(size=(size,2))),
                 self.exp_integral(2),self.exp_variance(2))
 
@@ -86,7 +86,7 @@ class TestMCImport(TestCase):
             xs = exponential(size=size)
             ys = uniform(size=size)
             return np.array((xs,ys)).T
-        self.run_all(lambda (x,y):y**2*(x<1.),npoints,dist,
+        self.run_all(lambda xs:xs[1]**2*(xs[0]<1.),npoints,dist,
                 self.exp_integral(1)/3.,
                 self.exp_integral(1)/5.-(self.exp_integral(1)**2)/9.)
 
