@@ -11,12 +11,15 @@ __all__ = [ "mcquad" ]
 class _MC_Integrator(_MC_Base):
 
     def __init__(self,f,npoints,xl,xu,args=(),
-            rng=numpy.random,nprocs=1,seed=None,batch_size=None):
+            rng=None,nprocs=1,seed=None,batch_size=None):
         self.f = f
         self.npoints = int(npoints)
         self.xl = np.array(xl)
         self.xu = np.array(xu)
-        self.rng = rng
+        if rng is None:
+            self.rng = numpy.random
+        else:
+            self.rng = rng
         self.args = args
         if len(self.xl) != len(self.xu):
             raise ValueError("'xl' and 'xu' must be the same length.")
@@ -37,7 +40,7 @@ class _MC_Integrator(_MC_Base):
         return func
 
 
-def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=1,
+def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
         seed=None,batch_size=None):
     """
     Compute a definite integral.
