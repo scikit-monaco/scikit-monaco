@@ -5,7 +5,8 @@ def configuration(parent_package="",top_path=None):
 
     config = Configuration("skmonaco",parent_package,top_path)
 
-    config.add_extension("_mc",sources="_mc.c",include_dirs=[numpy.get_include()],libraries=["m"])
+    config.add_extension("_mc",sources="_mc.c",include_dirs=[numpy.get_include()],
+            libraries=["m"])
     
     return config
 

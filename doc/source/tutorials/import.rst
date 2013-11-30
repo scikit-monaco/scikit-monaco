@@ -33,7 +33,7 @@ Multi-dimensional integrals
 
 To look at a slightly more complicated example, let's integrate :math:`f(x,y) = e^{-(y+2)}` in the truncated ring described :ref:`above <ring-figure>`. The integrand is largest around :math:`y = -2`, and decays very quickly:
 
-.. figure:: import_integrand.*
+.. figure:: build/import_integrand.*
     :height: 350pt
     :align: center
 
@@ -59,7 +59,7 @@ It makes sense to try and concentrate sample points around :math:`y = -2`. We ca
 
 This is what 200 points distributed according to ``distribution`` look like. Points that fall within :math:`\Omega` are colored in red, and those that fall outside are colored in black. Evidently, points are concentrated about :math:`y = -2`, such that this region gets sampled more often. 
 
-.. figure:: import_plot.*
+.. figure:: build/import_plot.*
     :height: 350pt
     :align: center
 

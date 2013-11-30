@@ -79,7 +79,7 @@ in this figure:
 
 .. _ring-figure:
 
-.. figure:: rings.*
+.. figure:: build/rings.*
     :height: 350pt
     :align: center
 
@@ -114,7 +114,7 @@ distributed within the rectangle bounded by the blue lines. Points in red fall
 within :math:`\Omega` and thus contribute to the integral, while points in
 black fall outside :math:`\Omega`.
 
-.. image:: scatter.*
+.. image:: build/scatter.*
     :height: 350pt
 
 To give a concrete example, let's take :math:`f(x,y) = y^2`.
