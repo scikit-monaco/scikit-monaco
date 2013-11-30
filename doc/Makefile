@@ -46,7 +46,7 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
-clean:
+clean: clean_tutorials
 	rm -rf $(BUILDDIR)/*
 
 html: tutorials
@@ -178,3 +178,6 @@ pseudoxml:
 
 tutorials:
 	$(MAKE) -C source/tutorials
+
+clean_tutorials:
+	$(MAKE) clean -C source/tutorials
