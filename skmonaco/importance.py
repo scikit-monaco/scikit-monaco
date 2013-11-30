@@ -38,7 +38,7 @@ class _MC_Importance_Integrator(_MC_Base):
 
 
 def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
-        rng=numpy.random,nprocs=None,seed=None,batch_size=None,weight=1.0):
+        rng=numpy.random,nprocs=1,seed=None,batch_size=None,weight=1.0):
     """
     Compute a definite integral, sampling from a non-uniform distribution.
 

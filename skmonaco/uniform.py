@@ -11,7 +11,7 @@ __all__ = [ "mcquad" ]
 class _MC_Integrator(_MC_Base):
 
     def __init__(self,f,npoints,xl,xu,args=(),
-            rng=numpy.random,nprocs=None,seed=None,batch_size=None):
+            rng=numpy.random,nprocs=1,seed=None,batch_size=None):
         self.f = f
         self.npoints = int(npoints)
         self.xl = np.array(xl)
@@ -37,7 +37,7 @@ class _MC_Integrator(_MC_Base):
         return func
 
 
-def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
+def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=1,
         seed=None,batch_size=None):
     """
     Compute a definite integral.
@@ -61,7 +61,7 @@ def mcquad(f,npoints,xl,xu,args=(),rng=numpy.random,nprocs=None,
     nprocs : int >= 1, optional
         Number of processes to use concurrently for the integration. Use 
         nprocs=1 to force a serial evaluation of the integral. This defaults
-        to the value returned by multiprocessing.cpu_count().
+        to 1.
     seed : iterable, optional
         Seed for the random number generator. Running the integration with the
         same seed guarantees that identical results will be obtained (even

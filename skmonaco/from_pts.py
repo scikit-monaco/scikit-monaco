@@ -6,7 +6,7 @@ __all__ = [ "integrate_from_points" ]
 
 class _Integrator_From_Points(_MC_Base):
 
-    def __init__(self,f,points,args=(),nprocs=None,batch_size=None,
+    def __init__(self,f,points,args=(),nprocs=1,batch_size=None,
             weight=1.0):
         self.f = f
         self.points = points
