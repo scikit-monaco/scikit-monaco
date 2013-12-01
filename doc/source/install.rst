@@ -7,10 +7,13 @@ Dependencies
 
 scikit-monaco requires the following:
 
-* Python (version?)
-* NumPy (version?)
+* Python (tested on 2.7 and 3.3)
+* NumPy (tested on 1.8)
 
-As well as the python development headers and a working C compiler. On
+scikit-monaco may work with other versions of python and numpy, but these
+are currently not supported.
+
+You will also need the python development headers and a working C compiler. On
 Debian-based operating systems such as Ubuntu, you can install the requirements
 with::
 
