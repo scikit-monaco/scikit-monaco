@@ -1,0 +1,18 @@
+
+# top level files
+include MANIFEST.in
+include *.rst *.txt
+include setup.py runtests.py
+include tox.ini
+
+# source code
+recursive-include skmonaco *
+
+# docs
+recursive-include doc *
+
+# prune generated directories
+prune doc/build
+prune */__pycache__
+
+global-exclude *.pyc *.bak *~ *.swp *.pyo
