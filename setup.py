@@ -4,12 +4,24 @@ import sys
 
 DISTNAME = "scikit-monaco"
 DESCRIPTION = "Python modules for Monte Carlo integration"
-LONG_DESCRIPTION = ""
+LONG_DESCRIPTION = open("README.rst").read()
 MAINTAINER = "Pascal Bugnion"
 MAINTAINER_EMAIL = "pascal@bugnion.org"
 URL = ""
 LICENSE = "new BSD"
 DOWNLOAD_URL = ""
+
+if sys.version_info[0] < 3:
+    import __builtin__ as builtins
+else:
+    import builtins
+
+# This is a bit hackish: we are setting a global variable so that the main
+# skmonaco __init__ can detect if it is being loaded by the setup routine, to
+# avoid attempting to load components that aren't built yet. While ugly, it's
+# a lot more robust than what was previously being used.
+# Copied from scipy setup file.
+builtins.__SKMONACO_SETUP__ = True
 
 import skmonaco
 

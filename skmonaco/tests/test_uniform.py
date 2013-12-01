@@ -1,4 +1,6 @@
 
+from __future__ import division
+
 import numpy as np
 from numpy.testing import TestCase, run_module_suite, assert_almost_equal
 from utils import assert_within_tol

@@ -2,7 +2,7 @@
 from __future__ import print_function
 from numpy.testing import TestCase,measure,run_module_suite
 
-from skmcquad import mcquad
+from skmonaco import mcquad
 
 class TestUniform(TestCase):
 

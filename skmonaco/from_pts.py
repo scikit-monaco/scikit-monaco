@@ -1,6 +1,8 @@
 
-from mc_base import _MC_Base
-from _mc import integrate_points
+from __future__ import division, absolute_import
+
+from .mc_base import _MC_Base
+from . import _mc
 
 __all__ = [ "integrate_from_points" ]
 
@@ -33,8 +35,7 @@ class _Integrator_From_Points(_MC_Base):
         def func(batch_number):
             start = self.batch_start[batch_number]
             end = self.batch_end[batch_number]
-            #print "Start: ",start, "End: ",end
-            return integrate_points(f,self.points[start:end],self.weight,self.args)
+            return _mc.integrate_points(f,self.points[start:end],self.weight,self.args)
         return func
 
 
@@ -88,7 +89,7 @@ def integrate_from_points(f,points,args=(),nprocs=1,batch_size=None,weight=1.0):
     >>> points = ranf(2*npoints).reshape((npoints,2)) # Generate some points
     >>> points.shape
     (100000,2)
-    >>> integrate_from_points(lambda (x,y):x*y, points) 
+    >>> integrate_from_points(lambda x_y:x_y[0]*x_y[1], points) 
     (0.24885..., 0.00069...)
     """
     return _Integrator_From_Points(

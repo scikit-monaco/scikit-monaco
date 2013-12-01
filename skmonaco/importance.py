@@ -1,10 +1,12 @@
 
+from __future__ import division, absolute_import
+
 import numpy as np
 import numpy.random
 
-from _mc import integrate_importance
-from mc_base import _MC_Base
-import random_utils
+from . import _mc
+from .mc_base import _MC_Base
+import skmonaco.random_utils as random_utils
 
 __all__ = [ "mcimport" ]
 
@@ -34,7 +36,7 @@ class _MC_Importance_Integrator(_MC_Base):
     def make_integrator(self):
         def func(batch_number):
             seed = self.seed_generator.get_seed_for_batch(batch_number)
-            return integrate_importance(self.f,self.batch_sizes[batch_number],
+            return _mc.integrate_importance(self.f,self.batch_sizes[batch_number],
                     self.distribution,self.args,self.rng,seed,
                     self.dist_kwargs,self.weight)
         return func
@@ -45,7 +47,7 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     """
     Compute a definite integral, sampling from a non-uniform distribution.
 
-    This routine integrates `f(x)*distribution(x)` by drawing samples from
+    This routine integrates ``f(x)*distribution(x)`` by drawing samples from
     `distribution`. Choosing `distribution` such that the variance of `f` is
     small will lead to much faster convergence than just using uniform
     sampling.
@@ -105,9 +107,9 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     Examples
     --------
 
-    Suppose that we want to integrate exp(-x^2/2) from x = -1 to 1. 
+    Suppose that we want to integrate ``exp(-x**2/2)`` from x = -1 to 1. 
     We can sample from the normal distribution, such that the
-    function `f = sqrt(2*pi) if -1. < x < 1. else 0.
+    function ``f`` is ``f = sqrt(2*pi) if -1. < x < 1. else 0``.
 
     >>> import numpy as np
     >>> from numpy.random import normal
@@ -139,7 +141,7 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     (3.8096..., 0.0248...)
 
     The integrand can also return an array. Suppose that we want to 
-    calculate the integrals of both ``exp(z^2)`` and ``z**2*exp(z^2)``
+    calculate the integrals of both ``exp(z**2)`` and ``z**2*exp(z**2)``
     in the unit sphere. We choose the same distribution as in the 
     previous example, but the function that we sum is now:
 
@@ -147,7 +149,7 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     ...     np.array((1.,z**2)))
     >>> result, error = mcimport(f,npoints,distribution)
     >>> result*8
-     array([ 3.81408558,  0.67236413])
+    array([ 3.81408558,  0.67236413])
     >>> error*8
     array([ 0.02488709,  0.00700179])
     """

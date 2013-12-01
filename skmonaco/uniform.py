@@ -1,10 +1,12 @@
 
+from __future__ import division, absolute_import
+
 import numpy as np
 import numpy.random
 
-from _mc import integrate_uniform
-from mc_base import _MC_Base
-import random_utils
+from . import _mc
+from .mc_base import _MC_Base
+import skmonaco.random_utils as random_utils
 
 __all__ = [ "mcquad" ]
 
@@ -35,7 +37,7 @@ class _MC_Integrator(_MC_Base):
         xu = self.xu
         def func(batch_number):
             seed = self.seed_generator.get_seed_for_batch(batch_number)
-            return integrate_uniform(f,batches[batch_number],
+            return _mc.integrate_uniform(f,batches[batch_number],
                     xl,xu,args=self.args,rng=self.rng,seed=seed)
         return func
 
@@ -102,7 +104,7 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
     fall within 1 of the origin.
 
     >>> mcquad(lambda x: 1 if sum(x**2) < 1 else 0.,
-    ...     npoints=20000, xl=[0.,0.], xu=[0.,0.])
+    ...     npoints=20000, xl=[0.,0.], xu=[1.,1.])
     (0.78550..., 0.0029024...)
     >>> np.pi/4.
     0.7853981633974483
