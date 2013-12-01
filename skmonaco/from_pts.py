@@ -89,7 +89,7 @@ def integrate_from_points(f,points,args=(),nprocs=1,batch_size=None,weight=1.0):
     >>> points = ranf(2*npoints).reshape((npoints,2)) # Generate some points
     >>> points.shape
     (100000,2)
-    >>> integrate_from_points(lambda (x,y):x*y, points) 
+    >>> integrate_from_points(lambda x_y:x_y[0]*x_y[1], points) 
     (0.24885..., 0.00069...)
     """
     return _Integrator_From_Points(
