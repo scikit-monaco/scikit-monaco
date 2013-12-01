@@ -46,7 +46,7 @@ in the project's root directory.
 Testing
 -------
 
-After the installation, run ``$ nosetests`` in the package's root directory.
+After the installation, run ``$ python runtests.py`` in the package's root directory.
 
 
 Issue reporting and contributing
