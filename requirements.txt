@@ -1,4 +1,5 @@
 # Requirements file for building the documentation.
 
 Sphinx
+numpy
 numpydoc
