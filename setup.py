@@ -67,7 +67,6 @@ def setup_package():
             license=LICENSE,
             url=URL,
             version=VERSION,
-            download_url=DOWNLOAD_URL,
             long_description=LONG_DESCRIPTION,
             classifiers=[
                 'Intended Audience :: Science/Research',
