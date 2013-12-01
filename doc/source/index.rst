@@ -6,6 +6,10 @@
 Scikit-Monaco Documentation
 ===========================
 
+**Scikit-monaco** is a toolkit for Monte Carlo integration. It is
+written in Cython for efficiency and includes parallelism to take
+advantage of multi-core processors.
+
 .. toctree::
    :maxdepth: 2
 
@@ -13,12 +17,4 @@ Scikit-Monaco Documentation
    api.rst
    CONTRIBUTING.rst
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
