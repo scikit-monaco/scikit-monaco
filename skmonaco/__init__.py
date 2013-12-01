@@ -11,7 +11,7 @@ This module provides a toolkit for Monte Carlo integration.
     integrate_from_points -- Integration of a function over specific points.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 try:
     __SKMONACO_SETUP__

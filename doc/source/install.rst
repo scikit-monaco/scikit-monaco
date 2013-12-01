@@ -42,6 +42,12 @@ python installation is system-wide, you will need to run these as root.
 Installing from source
 ----------------------
 
+Download the source code from the `Python package index
+<https://pypi.python.org/pypi/scikit-monaco>`_, extract it, move into the 
+root directory of the project and run the installer::
+
+    python setup.py install
+
 Installing the development version
 ----------------------------------
 
