@@ -202,7 +202,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Scikit-mcquad.tex', u'Scikit-mcquad Documentation',
+  ('index', 'Scikit-monaco.tex', u'scikit-monaco Documentation',
    u'Pascal Bugnion', 'manual'),
 ]
 
@@ -232,7 +232,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'scikit-mcquad', u'Scikit-mcquad Documentation',
+    ('index', 'scikit-monaco', u'scikit-monaco Documentation',
      [u'Pascal Bugnion'], 1)
 ]
 
@@ -246,8 +246,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'Scikit-mcquad', u'Scikit-mcquad Documentation',
-   u'Pascal Bugnion', 'Scikit-mcquad', 'One line description of project.',
+  ('index', 'Scikit-monaco', u'Scikit-monaco Documentation',
+   u'Pascal Bugnion', 'scikit-monaco', 'One line description of project.',
    'Miscellaneous'),
 ]
 
