@@ -7,9 +7,8 @@ DESCRIPTION = "Python modules for Monte Carlo integration"
 LONG_DESCRIPTION = open("README.rst").read()
 MAINTAINER = "Pascal Bugnion"
 MAINTAINER_EMAIL = "pascal@bugnion.org"
-URL = ""
+URL = "https://pypi.python.org/pypi/scikit-monaco"
 LICENSE = "new BSD"
-DOWNLOAD_URL = ""
 
 if sys.version_info[0] < 3:
     import __builtin__ as builtins
@@ -83,7 +82,6 @@ def setup_package():
                 'Operating System :: Unix',
                 'Operating System :: MacOS',
                 'Programming Language :: Python :: 2',
-                'Programming Language :: Python :: 2.6',
                 'Programming Language :: Python :: 2.7',
                 'Programming Language :: Python :: 3',
                 'Programming Language :: Python :: 3.3'],
@@ -100,7 +98,8 @@ def setup_package():
     else:
         from numpy.distutils.core import setup
         metadata["configuration"] = configuration
+    setup(**metadata)
 
 if __name__ == '__main__':
     from numpy.distutils.core import setup
-    setup(**configuration(top_path="").todict())
+    setup_package()

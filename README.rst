@@ -19,7 +19,8 @@ A code snippet is worth a thousand words. Let's look at integrating
 Links
 -----
 
-* Home page: 
+* Home page: https://pypi.python.org/pypi/scikit-monaco
+* Documentation: http://scikit-monaco.readthedocs.org/en/latest/
 * Source code: https://github.com/scikit-monaco/scikit-monaco
 * Issues: https://github.com/scikit-monaco/scikit-monaco/issues
 
@@ -28,6 +29,15 @@ Installation
 
 From Pypi
 ^^^^^^^^^
+
+The easiest way to download and install scikit-monaco is from the Python
+package index (pypi). Just run::
+
+    $ python easy_install scikit-monaco
+
+Or, if you have pip::
+
+    $ pip install scikit-monaco
 
 From source
 ^^^^^^^^^^^
