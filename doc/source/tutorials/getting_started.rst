@@ -77,7 +77,7 @@ in this figure:
 
 .. _ring-figure:
 
-.. figure:: build/rings.*
+.. figure:: img/rings.*
     :height: 350pt
     :align: center
 
@@ -112,7 +112,7 @@ distributed within the rectangle bounded by the blue lines. Points in red fall
 within :math:`\Omega` and thus contribute to the integral, while points in
 black fall outside :math:`\Omega`.
 
-.. image:: build/scatter.*
+.. image:: img/scatter.*
     :height: 350pt
 
 To give a concrete example, let's take :math:`f(x,y) = y^2`.
@@ -212,7 +212,7 @@ Multi-dimensional integrals
 
 To look at a slightly more complicated example, let's integrate :math:`f(x,y) = e^{-(y+2)}` in the truncated ring described :ref:`above <ring-figure>`. The integrand is largest around :math:`y = -2`, and decays very quickly:
 
-.. figure:: build/import_integrand.*
+.. figure:: img/import_integrand.*
     :height: 350pt
     :align: center
 
@@ -238,7 +238,7 @@ It makes sense to try and concentrate sample points around :math:`y = -2`. We ca
 
 This is what 200 points distributed according to ``distribution`` look like. Points that fall within :math:`\Omega` are colored in red, and those that fall outside are colored in black. Evidently, points are concentrated about :math:`y = -2`, such that this region gets sampled more often. 
 
-.. figure:: build/import_plot.*
+.. figure:: img/import_plot.*
     :height: 350pt
     :align: center
 
