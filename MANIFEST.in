@@ -3,15 +3,15 @@
 include MANIFEST.in
 include *.rst *.txt
 include setup.py runtests.py
-include tox.ini
 
 # source code
-recursive-include skmonaco *
+recursive-include skmonaco *.py *.pyx *.c *.tex *.pdf *.png
 
 # docs
-recursive-include doc *
+recursive-include doc *.py *.pyx *.c *.tex *.pdf *.png Makefile
 
 # prune generated directories
+prune skmonaco/build
 prune doc/build
 prune */__pycache__
 
