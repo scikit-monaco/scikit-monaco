@@ -94,14 +94,17 @@ else:
 # Copied from scipy setup file.
 builtins.__SKMONACO_SETUP__ = True
 
-# Create README file from LONG_DESCRIPTION, replacing non-standard
-# bits of re-structured text.
-with open("README.rst","w") as f:
-    f.write("""\
+def write_readme():
+    """
+    Create README file from LONG_DESCRIPTION, replacing non-standard
+    bits of re-structured text.
+    """
+    with open("README.rst","w") as f:
+        f.write("""\
 .. Automatically generated from LONG_DESCRIPTION keyword in 
 .. setup.py. Do not edit directly.\
-    """)
-    f.write(LONG_DESCRIPTION.replace(".. code:: python","::"))
+""")
+        f.write(LONG_DESCRIPTION.replace(".. code:: python","::"))
 
 import skmonaco
 
@@ -125,6 +128,7 @@ else:
 def configuration(parent_package="",top_path=None):
     if os.path.exists("MANIFEST"):
         os.remove("MANIFEST")
+    write_readme()
     from numpy.distutils.misc_util import Configuration
     config = Configuration(None,parent_package,top_path)
 

@@ -1,5 +1,5 @@
 .. Automatically generated from LONG_DESCRIPTION keyword in 
-.. setup.py. Do not edit directly.    
+.. setup.py. Do not edit directly.
 
 scikit-monaco
 =============
