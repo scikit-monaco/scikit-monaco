@@ -1,3 +1,5 @@
+.. Automatically generated from LONG_DESCRIPTION keyword in 
+.. setup.py. Do not edit directly.
 
 scikit-monaco
 =============
@@ -7,7 +9,9 @@ written in Cython, with process-level parallelism to squeeze the last bits of
 speed out of the python interpreter.
 
 A code snippet is worth a thousand words. Let's look at integrating 
-``sqrt(x**2 + y**2 + z**2)`` in the unit square::
+``sqrt(x**2 + y**2 + z**2)`` in the unit square:
+
+::
 
     >>> from skmonaco import mcquad
     >>> from math import sqrt
