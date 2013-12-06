@@ -5,7 +5,8 @@ include *.rst *.txt
 include setup.py runtests.py
 
 # source code
-recursive-include skmonaco *.py *.pyx *.c *.tex *.pdf *.png
+recursive-include skmonaco *.py *.pyx *.c *.tex *.png
+recursive-exclude skmonaco *.pdf
 
 # docs
 recursive-include doc *.py *.pyx *.c *.tex *.pdf *.png Makefile
@@ -15,4 +16,4 @@ prune skmonaco/build
 prune doc/build
 prune */__pycache__
 
-global-exclude *.pyc *.bak *~ *.swp *.pyo
+global-exclude *.pyc *.bak *~ *.swp *.pyo *.log *.aux

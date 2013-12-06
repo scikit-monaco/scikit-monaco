@@ -48,7 +48,7 @@ zs = g(xs,ys)
 #ax.plot_surface(xs,ys,zs,rstride=2,cstride=2,cmap=cm.coolwarm,linewidth=0)
 #ax.plot_wireframe(xs,ys,zs,rstride=3,cstride=3)
 
-plt.contourf(xs,ys,zs,100,cmap=cm.Reds)
+plt.contourf(xs,ys,zs,30,cmap=cm.Reds)
 
 plt.xlabel("$x$",fontsize=20)
 plt.ylabel("$y$",fontsize=20)
