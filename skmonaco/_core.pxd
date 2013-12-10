@@ -3,6 +3,14 @@ cimport numpy as cnp
 
 ctypedef cnp.float64_t DOUBLE
 
+# Transform from points in U[0,1]^dim to 
+# points uniformly distributed in a volume
+# set by xl and xu.
+cdef void generate_points(int npoints, int dim, 
+        double* xl, double* xu, cnp.ndarray[DOUBLE,ndim=2] pts)
+
+# Kernels
+
 cdef void mc_kernel(object f, int npts, int dim, cnp.ndarray[DOUBLE,ndim=2] pts,
         object args, double* summ, double* sum2)
 

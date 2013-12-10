@@ -13,15 +13,6 @@ cimport _core as core
 
 ctypedef cnp.float64_t DOUBLE
 
-cdef void generate_points(int npoints, int dim, 
-        cnp.ndarray[DOUBLE,ndim=1] xl, 
-        cnp.ndarray[DOUBLE,ndim=1] xu, 
-        cnp.ndarray[DOUBLE,ndim=2] pts):
-    cdef int ipt, idim
-    for ipt in range(npoints):
-        for idim in range(dim):
-            pts[ipt,idim] = xl[idim] + (xu[idim]-xl[idim])*pts[ipt,idim]
-
 cdef run_integral(object f,int npts, int dim, cnp.ndarray[DOUBLE,ndim=2] pts, 
         double weight, object args):
     cdef :
@@ -92,7 +83,7 @@ def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None)
 
     points = rng.ranf((npoints,dim))
     volume = abs(np.multiply.reduce(xu-xl))
-    generate_points(npoints, dim, xl_a, xu_a, points)
+    core.generate_points(npoints, dim, &(xl_a[0]), &(xu_a[0]), points)
     return run_integral(f,npoints,dim,points,volume,args)
     
 def integrate_importance(f,int npoints, distribution, 

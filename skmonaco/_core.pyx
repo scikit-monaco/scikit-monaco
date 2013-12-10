@@ -2,6 +2,13 @@
 cimport numpy as cnp
 import numpy as np
 
+cdef void generate_points(int npoints, int dim, 
+        double* xl, double* xu, cnp.ndarray[DOUBLE,ndim=2] pts):
+    cdef int ipt, idim
+    for ipt in range(npoints):
+        for idim in range(dim):
+            pts[ipt,idim] = xl[idim] + (xu[idim]-xl[idim])*pts[ipt,idim]
+
 cdef void mc_kernel(object f, int npts, int dim, cnp.ndarray[DOUBLE,ndim=2] pts, 
         object args, double* summ, double* sum2):
     cdef :
