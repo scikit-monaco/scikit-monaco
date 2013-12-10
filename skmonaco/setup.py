@@ -11,6 +11,9 @@ def configuration(parent_package="",top_path=None):
     config.add_extension("_mc",sources=["_mc.c"],include_dirs=[numpy.get_include()],
             libraries=["m"])
     
+    config.add_extension("_miser",sources=["_miser.c"],include_dirs=[numpy.get_include()],
+            libraries=["m"])
+    
     config.add_data_dir("tests")
     config.add_data_dir("benchmarks")
     return config
