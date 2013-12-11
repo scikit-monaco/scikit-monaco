@@ -24,33 +24,48 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         double* xl, double* xu, MiserParams* params,double* ave, double* var):
     cdef:
         int idim,ipt,idim_star,npre,npointsl,npointsu
-        double summ, sum2, fval,sigl,sigu,sigl_star,sigu_star
+        double summ, sum2, fval,sigl,sigu,sigl_star,sigu_star,npoints_float
         double diffl, diffu,sumdiff,avel,aveu,varl,varu,fracl,fracr
         double* xmid,*maxl,*minl,*maxu,*minu,*newxl,*newxu
         cnp.ndarray[DOUBLE,ndim=2] points
 
     if npoints < params.MNBS:
         # straight mc
-        points = ranf((npoints,ndims))
+        points = ranf(size=(npoints,ndims))
         core.generate_points(npoints,ndims,xl,xu,points)
         core.mc_kernel_noargs(f,npoints,ndims,points,&summ,&sum2)
-        ave[0] = summ/<double>npoints
-        var[0] = (sum2-summ**2/<double>(npoints))/(npoints**2)
+        npoints_float = <double>npoints
+        ave[0] = summ/npoints_float
+        var[0] = (sum2-summ**2/npoints_float)/(npoints_float**2)
 
     else:
         xmid = <double*>malloc(ndims*sizeof(double))
+        if xmid==NULL:
+            raise MemoryError
         maxl = <double*>malloc(ndims*sizeof(double))
+        if maxl==NULL:
+            raise MemoryError
         minl = <double*>malloc(ndims*sizeof(double))
+        if minl==NULL:
+            raise MemoryError
         maxu = <double*>malloc(ndims*sizeof(double))
+        if maxu==NULL:
+            raise MemoryError
         minu = <double*>malloc(ndims*sizeof(double))
+        if minu==NULL:
+            raise MemoryError
         newxl = <double*>malloc(ndims*sizeof(double))
+        if newxl==NULL:
+            raise MemoryError
         newxu = <double*>malloc(ndims*sizeof(double))
+        if newxu==NULL:
+            raise MemoryError
 
         for idim in range(ndims):
             xmid[idim] = 0.5*(xl[idim]+xu[idim])
 
         npre = <int>fmax(params.PFAC*npoints,<double>params.MNPT)
-        points = ranf((npre,ndims))
+        points = ranf(size=(npre,ndims))
         core.generate_points(npre,ndims,xl,xu,points)
 
         # find maximum and minimum for each sub-region
@@ -63,7 +78,7 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         for ipt in range(npre):
             fval = f(points[ipt])
             for idim in range(ndims):
-                if points[ipt][idim] < xmid[idim]:
+                if points[ipt,idim] < xmid[idim]:
                     maxl[idim] = fmax(fval,maxl[idim])
                     minl[idim] = fmin(fval,minl[idim])
                 else:
@@ -85,10 +100,15 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
                     diffl_star = diffl
                     diffu_star = diffu
 
-        # FIXME free arrays before recursion!
+        free(xmid)
+        free(maxl)
+        free(minl)
+        free(maxu)
+        free(minu)
+
         if idim_star == -1:
             # Not enough points. Choose direction at random.
-            idim_star = <int>ranf(1)*ndims
+            idim_star = <int>(ranf(1)*ndims)
             sigl = 1.0
             sigr = 1.0
         else:
@@ -106,6 +126,9 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         npointsu = npoints-npre-npointsl
         miser_kernel(f,ranf,npointsl,ndims,xl,newxu,params,&avel,&varl)
         miser_kernel(f,ranf,npointsu,ndims,newxl,xu,params,&aveu,&varu)
+
+        free(newxl)
+        free(newxu)
         
         ave[0] = 0.5*(avel+aveu)
         var[0] = 0.25*(varl+varu)
