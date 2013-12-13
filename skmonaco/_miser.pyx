@@ -76,7 +76,7 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
             minu[idim] = BIG
 
         for ipt in range(npre):
-            fval = f(points[ipt])
+            fval = f(points[ipt,:])
             for idim in range(ndims):
                 if points[ipt,idim] < xmid[idim]:
                     maxl[idim] = fmax(fval,maxl[idim])
@@ -134,7 +134,8 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         var[0] = 0.25*(varl+varu)
 
 
-def mcmiser(f,npoints,xl,xu,min_bisect=100,pre_frac=0.1,exponent=2./3.,rng=None,seed=None):
+def integrate_miser(f,npoints,xl,xu,args=(),
+        min_bisect=100,pre_frac=0.1,exponent=2./3.,rng=None,seed=None):
     cdef MiserParams params
     cdef double ave, var
     cdef cnp.ndarray[DOUBLE] xl_tmp, xu_tmp
@@ -154,6 +155,8 @@ def mcmiser(f,npoints,xl,xu,min_bisect=100,pre_frac=0.1,exponent=2./3.,rng=None,
     ranf = rng.ranf
     xl_tmp = np.array(xl)
     xu_tmp = np.array(xu)
+    if len(args) > 0:
+        raise NotImplementedError
     assert len(xl_tmp) == len(xu_tmp)
     miser_kernel(f,ranf,npoints,len(xl_tmp),<double*>xl_tmp.data,<double*>xu_tmp.data,
             &params, &ave, &var)
