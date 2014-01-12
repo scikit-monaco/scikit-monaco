@@ -2,8 +2,9 @@
 from __future__ import division
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, assert_almost_equal
-from utils import assert_within_tol
+from numpy.testing import TestCase, assert_almost_equal
+from numpy.testing.decorators import slow
+from utils import assert_within_tol, run_module_suite
 
 from skmonaco import mcquad
 
@@ -49,6 +50,38 @@ class TestMCQuad(TestCase):
     def run_all(self,f,npoints,expected_value,expected_variance,**kwargs):
         self.run_serial(f,npoints,expected_value,expected_variance,**kwargs)
         self.run_parallel(f,npoints,expected_value,expected_variance,**kwargs)
+
+    def run_check_unseeded_distribution(self,f,ntrials,*args,**kwargs):
+        """
+        Check that the results returned by integrating f are normally distributed.
+
+        Does not try to seed each trial.
+        """
+        import scipy.stats
+        results, errors = [], []
+        for itrial in range(ntrials):
+            res, err = mcquad(f,*args,**kwargs)
+            results.append(res)
+            errors.append(err)
+        results = np.array(results).flatten()
+        w,p = scipy.stats.shapiro(results)
+        self.assertGreater(p,0.1)
+
+    def run_check_seeded_distribution(self,f,ntrials,*args,**kwargs):
+        """
+        Check that the results returned by integrating f are normally distributed.
+
+        Seeds each trial with the trial number.
+        """
+        import scipy.stats
+        results, errors = [], []
+        for itrial in range(ntrials):
+            res, err = mcquad(f,*args,seed=itrial,**kwargs)
+            results.append(res)
+            errors.append(err)
+        results = np.array(results).flatten()
+        w,p = scipy.stats.shapiro(results)
+        self.assertGreater(p,0.1)
 
     def const(self,x):
         """
@@ -130,6 +163,54 @@ class TestMCQuad(TestCase):
         npoints = 50000
         variance = self.prod_variance(6)
         self.run_all(self.prod,npoints,0.5**6,variance,xl=[0.]*6,xu=[1.]*6)
+
+    @slow
+    def test_distribution_serial_unseeded(self):
+        """
+        Check that unseeded integrals are normally distributed (serial).
+
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_unseeded_distribution(lambda x:x**2,
+                ntrials,npoints,[0.],[1.])
+
+    @slow
+    def test_distribution_serial_seeded(self):
+        """
+        Check that seeded integrals are normally distributed (serial).
+
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_seeded_distribution(lambda x:x**2,
+                ntrials,npoints,[0.],[1.])
+
+    @slow
+    def test_distribution_parallel_unseeded(self):
+        """
+        Check that unseeded integrals are normally distributed (parallel).
+
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_unseeded_distribution(lambda x:x**2,
+                ntrials,npoints,[0.],[1.],nprocs=2,batch_size=npoints/10)
+
+    @slow
+    def test_distribution_parallel_seeded(self):
+        """
+        Check that seeded integrals are normally distributed (parallel).
+
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_seeded_distribution(lambda x:x**2,
+                ntrials,npoints,[0.],[1.],nprocs=2,batch_size=npoints/10)
 
     def test_args(self):
         """
@@ -237,4 +318,9 @@ class TestMCQuad(TestCase):
 
 
 if __name__ == '__main__':
-    run_module_suite()
+    # Command line arguments are passed directly to 'nose'.
+    # Eg. run '$ python test_uniform.py --eval-attr="not slow"' to 
+    # avoid running the "slow" tests.
+    import sys
+    run_module_suite(argv=sys.argv)
+

@@ -1,8 +1,9 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, assert_almost_equal
+from numpy.testing import TestCase, assert_almost_equal
+from numpy.testing.decorators import slow
 from numpy.random import exponential,uniform
-from utils import assert_within_tol
+from utils import assert_within_tol, run_module_suite
 
 from skmonaco import mcimport
 
@@ -42,6 +43,38 @@ class TestMCImport(TestCase):
     def run_all(self,f,npoints,distribution,expected_value,expected_variance,**kwargs):
         self.run_serial(f,npoints,distribution,expected_value,expected_variance,**kwargs)
         self.run_parallel(f,npoints,distribution,expected_value,expected_variance,**kwargs)
+
+    def run_check_unseeded_distribution(self,f,ntrials,*args,**kwargs):
+        """
+        Check that the results returned by integrating f are normally distributed.
+
+        Does not try to seed each trial.
+        """
+        import scipy.stats
+        results, errors = [], []
+        for itrial in range(ntrials):
+            res, err = mcimport(f,*args,**kwargs)
+            results.append(res)
+            errors.append(err)
+        results = np.array(results).flatten()
+        w,p = scipy.stats.shapiro(results)
+        self.assertGreater(p,0.1)
+
+    def run_check_seeded_distribution(self,f,ntrials,*args,**kwargs):
+        """
+        Check that the results returned by integrating f are normally distributed.
+
+        Seeds each trial with the trial number.
+        """
+        import scipy.stats
+        results, errors = [], []
+        for itrial in range(ntrials):
+            res, err = mcimport(f,*args,seed=itrial,**kwargs)
+            results.append(res)
+            errors.append(err)
+        results = np.array(results).flatten()
+        w,p = scipy.stats.shapiro(results)
+        self.assertGreater(p,0.1)
 
     def test_exp_1d(self):
         """
@@ -89,6 +122,54 @@ class TestMCImport(TestCase):
         self.run_all(lambda xs:xs[1]**2*(xs[0]<1.),npoints,dist,
                 self.exp_integral(1)/3.,
                 self.exp_integral(1)/5.-(self.exp_integral(1)**2)/9.)
+
+    @slow
+    def test_distribution_serial_unseeded(self):
+        """
+        Check that unseeded integrals are normally distributed (serial).
+        
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_unseeded_distribution(lambda x: x<1.0,
+                ntrials,npoints,exponential)
+
+    @slow
+    def test_distribution_serial_seeded(self):
+        """
+        Check that seeded integrals are normally distributed (serial).
+        
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_seeded_distribution(lambda x: x<1.0,
+                ntrials,npoints,exponential)
+
+    @slow
+    def test_distribution_parallel_unseeded(self):
+        """
+        Check that unseeded integrals are normally distributed (parallel).
+        
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_unseeded_distribution(lambda x: x<1.0,
+                ntrials,npoints,exponential,nprocs=2,batch_size=npoints/10)
+
+    @slow
+    def test_distribution_parallel_seeded(self):
+        """
+        Check that seeded integrals are normally distributed (parallel).
+        
+        Use Shapiro-Wilkes test for normality.
+        """
+        ntrials = 1000
+        npoints = 1e4
+        self.run_check_seeded_distribution(lambda x: x<1.0,
+                ntrials,npoints,exponential,nprocs=2,batch_size=npoints/10)
 
     def test_weight(self):
         """
@@ -176,4 +257,5 @@ class TestMCImport(TestCase):
                 
 
 if __name__ == '__main__':
-    run_module_suite()
+    import sys
+    run_module_suite(argv=sys.argv)

@@ -76,10 +76,14 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
         Keyword arguments to be passed to `distribution`.
     nprocs : int >= 1, optional 
         Number of processes to use for the integration. 1 by default.
-    seed : iterable, optional
-        Seed for the random number generator. Running the integration 
-        with the same seed guarantees identical results. Chooses a
-        value basedon the system time by default.
+    seed : int, iterable, optional
+        Seed for the random number generator. Running the integration with the
+        same seed guarantees that identical results will be obtained (even
+        if nprocs is different). 
+        If the argument is absent, this lets the random number generator
+        handle the seeding.
+        If the default rng is used, this means the seed will be read from
+        `/dev/random`.
     rng : module or class, optional
         Random number generator. Must expose the attributes `seed` by
         default. The ``numpy.random`` module by default.
@@ -106,7 +110,6 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
 
     Examples
     --------
-
     Suppose that we want to integrate ``exp(-x**2/2)`` from x = -1 to 1. 
     We can sample from the normal distribution, such that the
     function ``f`` is ``f = sqrt(2*pi) if -1. < x < 1. else 0``.

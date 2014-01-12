@@ -150,8 +150,6 @@ def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None)
     if npoints < 2:
         raise ValueError("'npoints must be >= 2.")
 
-    if seed is None:
-        seed = [time.time()+os.getpid()]
     rng.seed(seed)
 
     points = rng.ranf((npoints,dim))
@@ -168,11 +166,9 @@ def integrate_importance(f,int npoints, distribution,
     if npoints < 2:
         raise ValueError("'npoints must be >= 2.")
 
-    pts_generated = distribution(size=1,**dist_kwargs)
-
-    if seed is None:
-        seed = [time.time()+os.getpid()]
     rng.seed(seed)
+
+    pts_generated = distribution(size=1,**dist_kwargs)
 
     #t0 = time.time()
     if np.size(pts_generated) == 1 and np.rank(pts_generated) == 1:

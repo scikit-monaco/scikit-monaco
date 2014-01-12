@@ -1,8 +1,8 @@
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, assert_almost_equal
+from numpy.testing import TestCase, assert_almost_equal
 import numpy.random
-from utils import assert_within_tol
+from utils import assert_within_tol, run_module_suite
 
 from skmonaco import integrate_from_points
 
@@ -133,4 +133,5 @@ class TestIntegrateFromPoints(TestCase):
         
     
 if __name__ == '__main__':
-    run_module_suite()
+    import sys
+    run_module_suite(argv=sys.argv)
