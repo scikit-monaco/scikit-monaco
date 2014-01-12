@@ -67,12 +67,14 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
         Number of processes to use concurrently for the integration. Use 
         nprocs=1 to force a serial evaluation of the integral. This defaults
         to 1.
-    seed : iterable, optional
+    seed : int, iterable or None
         Seed for the random number generator. Running the integration with the
         same seed guarantees that identical results will be obtained (even
-        if nprocs is different). Lets the rng handle seeding by default.
+        if nprocs is different). 
+        If the argument is absent, this lets the random number generator
+        handle the seeding.
         If the default rng is used, this means the seed will be read from
-        /dev/random.
+        `/dev/random`.
     rng : module or class, optional
         Random number generator. Must expose the attributes `seed` and `ranf`.
         The ``numpy.random`` module by default.
@@ -95,7 +97,6 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
 
     Examples
     --------
-
     Integrate x*y over the unit square. The true value is 1./4.
 
     >>> mcquad(lambda x: x[0]*x[1], npoints=20000, xl=[0.,0.],xu=[1.,1.])
