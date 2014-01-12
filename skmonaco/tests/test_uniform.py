@@ -2,8 +2,8 @@
 from __future__ import division
 
 import numpy as np
-from numpy.testing import TestCase, run_module_suite, assert_almost_equal
-from utils import assert_within_tol
+from numpy.testing import TestCase, assert_almost_equal
+from utils import assert_within_tol, run_module_suite
 
 from skmonaco import mcquad
 
@@ -237,4 +237,9 @@ class TestMCQuad(TestCase):
 
 
 if __name__ == '__main__':
-    run_module_suite()
+    # Command line arguments are passed directly to 'nose'.
+    # Eg. run '$ python test_uniform.py --eval-attr="not slow"' to 
+    # avoid running the "slow" tests.
+    import sys
+    run_module_suite(argv=sys.argv)
+
