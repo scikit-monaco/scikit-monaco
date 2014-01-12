@@ -3,6 +3,7 @@ from __future__ import division
 
 import numpy as np
 from numpy.testing import TestCase, assert_almost_equal
+from numpy.testing.decorators import slow
 from utils import assert_within_tol, run_module_suite
 
 from skmonaco import mcquad
@@ -130,6 +131,25 @@ class TestMCQuad(TestCase):
         npoints = 50000
         variance = self.prod_variance(6)
         self.run_all(self.prod,npoints,0.5**6,variance,xl=[0.]*6,xu=[1.]*6)
+
+    @slow
+    def test_distribution_serial_unseeded(self):
+        """
+        Check that unseeded integrands are normally distributed.
+
+        Use Shapiro-Wilkes test for normality.
+        """
+        import scipy.stats
+        ntrials = 1000
+        npoints = 1e4
+        results, errors = [], []
+        for itrial in range(ntrials):
+            res, err = mcquad(lambda x: x**2,npoints,[0.],[1.])
+            results.append(res)
+            errors.append(err)
+        results = np.array(results).flatten()
+        w,p = scipy.stats.shapiro(results)
+        self.assertGreater(p,0.1)
 
     def test_args(self):
         """
