@@ -23,6 +23,7 @@ if not __SKMONACO_SETUP__ :
     from .uniform import * 
     from .importance import *
     from .from_pts import *
+    from .miser import *
 
     from numpy.testing import Tester
     test = Tester().test

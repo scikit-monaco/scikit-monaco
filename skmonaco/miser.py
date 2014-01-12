@@ -8,6 +8,7 @@ import skmonaco.random_utils as random_utils
 from .mc_base import _MC_Base
 from . import _miser
 
+__all__ = ["mcmiser"]
 
 class _MC_Miser_Integrator(_MC_Base):
 
