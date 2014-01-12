@@ -70,8 +70,9 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
     seed : iterable, optional
         Seed for the random number generator. Running the integration with the
         same seed guarantees that identical results will be obtained (even
-        if nprocs is different). Chooses a value based on the system time
-        and process id by default.
+        if nprocs is different). Lets the rng handle seeding by default.
+        If the default rng is used, this means the seed will be read from
+        /dev/random.
     rng : module or class, optional
         Random number generator. Must expose the attributes `seed` and `ranf`.
         The ``numpy.random`` module by default.

@@ -77,9 +77,11 @@ def mcimport(f,npoints,distribution,args=(),dist_kwargs={},
     nprocs : int >= 1, optional 
         Number of processes to use for the integration. 1 by default.
     seed : iterable, optional
-        Seed for the random number generator. Running the integration 
-        with the same seed guarantees identical results. Chooses a
-        value basedon the system time by default.
+        Seed for the random number generator. Running the integration with the
+        same seed guarantees that identical results will be obtained (even
+        if nprocs is different). Lets the rng handle seeding by default.
+        If the default rng is used, this means the seed will be read from
+        /dev/random.
     rng : module or class, optional
         Random number generator. Must expose the attributes `seed` by
         default. The ``numpy.random`` module by default.
