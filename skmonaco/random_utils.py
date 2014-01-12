@@ -45,5 +45,6 @@ class SeedGenerator(object):
                 raise RuntimeWarning("The seed generator has produced "
                         "the same seed more than once. Check that it is "
                         "passed unique batch numbers.")
+            self.seed_cache.add(seed)
             return seed
 
