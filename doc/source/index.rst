@@ -15,6 +15,11 @@ advantage of multi-core processors.
 
    tutorials.rst
    api.rst
+
+.. toctree::
+   :maxdepth: 1
+
    CONTRIBUTING.rst
+   release_notes.rst
 
 
