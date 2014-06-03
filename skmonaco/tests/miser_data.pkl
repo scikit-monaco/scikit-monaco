@@ -32,7 +32,7 @@ NNNI-1
 I-1
 I0
 tp14
-bS'\xcf\x8f\xa2\xc1\xb8\r\n?'
+bS'\xec\x93#\xfe\x01\x10\n?'
 p15
 tp16
 Rp17
@@ -51,7 +51,7 @@ p23
 F10000.0
 sS'seed'
 p24
-I2476
+I5644
 sS'analytical_value'
 p25
 F0.3333333333333333
@@ -71,7 +71,7 @@ Rp30
 g7
 g8
 (g12
-S'\x903\xd1\xd4~/\xb3?'
+S'\xc3\xf3\xfb\x99V+\xb3?'
 p32
 tp33
 Rp34
@@ -84,7 +84,7 @@ g22
 sg23
 F10000.0
 sg24
-I2455
+I538
 sg25
 F342.3333333333333
 sg26
@@ -101,7 +101,7 @@ Rp38
 g7
 g8
 (g12
-S'\x1a\xd1 \x9fd\x88E?'
+S'\xac\xd2\xa1\x1e\xa7\x88E?'
 p40
 tp41
 Rp42
@@ -116,7 +116,7 @@ p44
 sg23
 F10000.0
 sg24
-I1366
+I1422
 sg25
 F0.6666666666666666
 sg26
@@ -134,7 +134,7 @@ Rp47
 g7
 g8
 (g12
-S'\xee\xe1<\x06[\x93x?'
+S'\xced,\x05T\x8ax?'
 p49
 tp50
 Rp51
@@ -152,7 +152,7 @@ g44
 sg23
 F10000.0
 sg24
-I1830
+I9704
 sg25
 F2.0
 sg26
@@ -174,7 +174,7 @@ Rp55
 g7
 g8
 (g12
-S'\x80?\x10\x9b\xa9s\x10?'
+S'o\xc6\xac\xe1\xebq\x10?'
 p57
 tp58
 Rp59
@@ -188,7 +188,7 @@ p61
 sg23
 F10000.0
 sg24
-I2659
+I9680
 sg25
 F0.5
 sg26
@@ -205,7 +205,7 @@ Rp64
 g7
 g8
 (g12
-S'&\xa4&\xe7\\\xd5)?'
+S'[\xca\xaa\x97\xb2\xd9)?'
 p66
 tp67
 Rp68
@@ -223,7 +223,7 @@ g61
 sg23
 F10000.0
 sg24
-I3545
+I7307
 sg25
 F0.015625
 sg26
@@ -235,5 +235,38 @@ aF0.0
 aF0.0
 aF0.0
 aF0.0
+aF0.0
+asbag1
+(g2
+g3
+Ntp71
+Rp72
+(dp73
+g7
+g8
+(g12
+S'Q\x8f\xa6-\x1b\xd4R?'
+p74
+tp75
+Rp76
+sg18
+(lp77
+F1.0
+aF1.0
+asg20
+Nsg21
+S'x**2+3*y**2'
+p78
+sg23
+F10000.0
+sg24
+I8566
+sg25
+F1.3333333333333333
+sg26
+I500
+sg27
+(lp79
+F0.0
 aF0.0
 asba.

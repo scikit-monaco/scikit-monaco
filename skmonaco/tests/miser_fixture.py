@@ -7,6 +7,7 @@ from skmonaco import mcmiser
 miser_functions = { 
         "x**2" : lambda x: x**2,
         "x**2 (sum)" : lambda x: sum(x**2),
+        "x**2+3*y**2" : lambda x: x[0]**2 + 3*x[1]**2,
         "prod" : lambda x: np.prod(x)
 }
 
