@@ -100,12 +100,6 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
                     diffl_star = diffl
                     diffu_star = diffu
 
-        free(xmid)
-        free(maxl)
-        free(minl)
-        free(maxu)
-        free(minu)
-
         if idim_star == -1:
             # Not enough points. Choose direction at random.
             idim_star = <int>(ranf(1)*ndims)
@@ -124,6 +118,15 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         npointsl = int(<double>params.MNPT+
                 <double>(npoints-npre-2*params.MNPT)*sigl/(sigl+sigu))
         npointsu = npoints-npre-npointsl
+
+        # Free temporary arrays
+        free(xmid)
+        free(maxl)
+        free(minl)
+        free(maxu)
+        free(minu)
+
+        # Recurse
         miser_kernel(f,ranf,npointsl,ndims,xl,newxu,params,&avel,&varl)
         miser_kernel(f,ranf,npointsu,ndims,newxl,xu,params,&aveu,&varu)
 
