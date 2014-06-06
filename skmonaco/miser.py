@@ -42,7 +42,7 @@ class _MC_Miser_Integrator(_MC_Base):
         def func(batch_number):
             seed = self.seed_generator.get_seed_for_batch(batch_number)
             batch_size = batches[batch_number]
-            res, std = _miser.integrate_miser(f,batches[batch_number],
+            res, std = _miser.integrate_miser(f,batch_size,
                     xl,xu,args=self.args,min_bisect=self.min_bisect,
                     pre_frac=self.pre_frac,exponent=self.exponent,
                     rng=self.rng,seed=seed)
