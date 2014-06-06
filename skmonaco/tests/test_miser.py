@@ -65,6 +65,17 @@ class TestMCMiser(TestCase):
         """
         with self.assertRaises(ValueError):
             mcmiser(lambda x: x**2,2000,xl=[0.],xu=[1.],nprocs=-1)
+
+    def test_integer_seed(self):
+        """
+        Check that MISER works with an integer seed.
+        """
+        func = lambda x: x**2
+        npoints = 50000
+        res, error = mcmiser(func, npoints, [0.], [1.], seed=12345)
+        res2, error2 = mcmiser(func, npoints, [0.], [1.], seed=12345)
+        assert res == res2, "{0} != {1}".format(res, res2)
+        assert error == error2
         
 
 if __name__ == '__main__':
