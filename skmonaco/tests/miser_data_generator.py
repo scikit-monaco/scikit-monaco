@@ -19,6 +19,49 @@ import pickle
 
 import miser_fixture
 
+banner = """
+Generating test fixtures for the MISER algorithm.
+
+Run "$ python miser_data_generator.py --info" for information on
+how the tests are constructed and run.
+
+"""
+
+info = """
+This generates test fixtures for the MISER implementation.
+
+Unlike the straight MC integration, there is no analytical formula
+for the error in a MISER run. To check that the implementation
+predicts reasonable errors, we run many (~500, depending on the
+function) integrals of a function with known integral to build 
+up a histogram of the expected results. By looking at the
+standard deviation of this histogram, we can build up an 
+expected value of the standard deviation of the results. This
+standard deviation should be reasonably close to the mean error
+across all the runs.
+
+Practically, the tests are divided into 2 stages:
+
+    1. We generate the fixtures using this script. This builds
+       up the histogram of calculated integrals, and checks that
+       its standard deviation is comparable to the mean predicted
+       error. This stage is computationally expensive, since we need
+       to run many iterations of the MISER algorithm to build up 
+       a reasonable integral. This stage is run using 
+       $ python miser_data_generator.py
+
+    2. We run regression tests by running the MISER algorithm once
+       and checking that the predicted result and error are 
+       comparable to those calculated in step 1. This step is run 
+       using
+       $ python test_miser.py 
+       (or just running the full skmonaco test suite).
+
+As with the other MC tests, there is a ~1% probability that
+they will fail, despite the implementation being correct. 
+If that happens, re-run the tests.
+"""
+
 
 DATA_FILE = "miser_data.pkl"
 
@@ -38,19 +81,55 @@ if __name__ == '__main__':
     parser.add_argument("--no-save",action="store_true",
             help="Don't save results.")
 
+    parser.add_argument("--info",action="store_true",
+            help="Print information on testing algorithm.")
+
     args = parser.parse_args()
+
+    if args.info:
+        print(info)
+        exit()
 
     VERBOSE = not args.quiet
     
-    fixtures = [
-            miser_fixture.TestRun("x**2", 1e4, 500, [0.],[1.], 1./3.),
-            miser_fixture.TestRun("x**2", 1e4, 500, [-10.],[3.],1027./3.),
-            miser_fixture.TestRun("x**2 (sum)", 1e4, 500, [0.]*2,[1.]*2,2./3.),
-            miser_fixture.TestRun("x**2 (sum)", 1e4, 500, [0.]*6,[1.]*6,2.),
-            miser_fixture.TestRun("prod", 1e4, 500, [0.],[1.],0.5),
-            miser_fixture.TestRun("prod", 1e4, 500, [0.]*6,[1.]*6,0.5**6),
-            miser_fixture.TestRun("x**2+3*y**2",1e4,500,[0.,0.],[1.,1.],4./3.)
+    serial_fixtures = [
+            miser_fixture.TestRun("x**2",
+                1e4, 500, [0.],[1.], 1, 1./3.),
+            miser_fixture.TestRun("x**2", 
+                1e4, 500, [-10.],[3.], 1, 1027./3.),
+            miser_fixture.TestRun("x**2 (sum)", 
+                1e4, 500, [0.]*2,[1.]*2,1, 2./3.),
+            miser_fixture.TestRun("x**2 (sum)",
+                1e4, 500, [0.]*6,[1.]*6,1, 2.),
+            miser_fixture.TestRun("prod", 
+                1e4, 500, [0.],[1.],1, 0.5),
+            miser_fixture.TestRun("prod",
+                1e4, 500, [0.]*6,[1.]*6,1, 0.5**6),
+            miser_fixture.TestRun("x**2+3*y**2",
+                1e4,500,[0.,0.],[1.,1.],1, 4./3.)
     ]
+
+    parallel_fixtures = [
+            miser_fixture.TestRun("x**2",
+                1e4, 500, [0.],[1.], 4, 1./3.),
+            miser_fixture.TestRun("x**2", 
+                1e4, 500, [-10.],[3.], 4, 1027./3.),
+            miser_fixture.TestRun("x**2 (sum)", 
+                1e4, 500, [0.]*2,[1.]*2, 4, 2./3.),
+            miser_fixture.TestRun("x**2 (sum)",
+                1e4, 500, [0.]*6,[1.]*6, 4, 2.),
+            miser_fixture.TestRun("prod", 
+                1e4, 500, [0.],[1.], 4, 0.5),
+            miser_fixture.TestRun("prod",
+                1e4, 500, [0.]*6,[1.]*6, 4, 0.5**6),
+            miser_fixture.TestRun("x**2+3*y**2",
+                1e4,500,[0.,0.],[1.,1.], 4, 4./3.)
+            
+    ]
+
+    fixtures = serial_fixtures + parallel_fixtures
+
+    print(banner)
 
     # If args.only is specified, try loading from data file.
     if args.only is not None:
@@ -63,7 +142,8 @@ if __name__ == '__main__':
     # Prepare the fixtures.
     for ifixture, fixture in enumerate(fixtures):
         if args.only is not None and ifixture not in args.only:
-            fixtures[ifixture] = saved_fixtures[ifixture]
+            if not args.no_save:
+                fixtures[ifixture] = saved_fixtures[ifixture]
             continue
         if VERBOSE:
             msg = "({}) {}".format(ifixture,fixture.fcode)

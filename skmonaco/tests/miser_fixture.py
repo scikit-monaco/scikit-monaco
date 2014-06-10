@@ -13,7 +13,7 @@ miser_functions = {
 
 class TestRun(object):
 
-    def __init__(self,fcode,npoints,ntrials,lbound, ubound, analytical_value):
+    def __init__(self,fcode,npoints,ntrials,lbound, ubound, nprocs, analytical_value):
         """
         Create a TestFixture.
 
@@ -36,12 +36,15 @@ class TestRun(object):
         lbound, ubound : list of floats
             lower (upper) bound for the integration
 
+        nprocs : int
+            number of processes to use in the integration.
+
         Example
         -------
 
         To generate a test fixture, 
 
-        >>> fixture = TestRun("x**2", 1e4, 100, [0.], [1.], 1./3.)
+        >>> fixture = TestRun("x**2", 1e4, 100, [0.], [1.], 1, 1./3.)
         >>> fixture.check_results_error()
         >>> fixture.mean_sigma # average error per trial
         3.86390778798e-05
@@ -64,6 +67,7 @@ class TestRun(object):
         self.analytical_value = analytical_value
         self.lbound = lbound
         self.ubound = ubound
+        self.nprocs = nprocs
         self.mean_sigma = None # Calculated by self.check_results_error()
         self.sigma_sigma = None # Calculated by self.check_results_error()
         self.seed = randint(0,10000)

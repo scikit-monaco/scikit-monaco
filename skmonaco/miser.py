@@ -6,6 +6,7 @@ import numpy.random
 
 import skmonaco.random_utils as random_utils
 from .mc_base import _MC_Base
+import skmonaco.mp as mp
 from . import _miser
 
 __all__ = ["mcmiser"]
@@ -52,6 +53,7 @@ class _MC_Miser_Integrator(_MC_Base):
     def run_serial(self):
         res_sum, var_sum = 0., 0.
         assert len(set(self.batch_sizes))==1
+        assert len(self.batch_sizes) == 1
         f = self.make_integrator()
         for ibatch,batch_size in enumerate(self.batch_sizes):
             res, std = f(ibatch)
@@ -60,7 +62,15 @@ class _MC_Miser_Integrator(_MC_Base):
         return res_sum/self.nbatches,np.sqrt(var_sum)/self.nbatches
 
     def run_parallel(self):
-        raise NotImplementedError
+        f = self.make_integrator()
+        res_sum, var_sum = 0., 0.
+        assert len(set(self.batch_sizes))==1
+        assert len(self.batch_sizes) == self.nprocs
+        res_list = mp.parmap(f,range(self.nbatches),nprocs=self.nprocs)
+        for  res, std in res_list:
+            res_sum += res
+            var_sum += std**2
+        return res_sum/self.nbatches,np.sqrt(var_sum)/self.nbatches
 
 
 def mcmiser(f,npoints,xl,xu,args=(),rng=None,nprocs=1,seed=None,
