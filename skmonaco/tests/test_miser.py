@@ -76,6 +76,30 @@ class TestMCMiser(TestCase):
         res2, error2 = mcmiser(func, npoints, [0.], [1.], seed=12345)
         assert res == res2, "{0} != {1}".format(res, res2)
         assert error == error2
+
+    def test_args(self):
+        """
+        Check that MISER works with arguments.
+        """
+        func_noargs = lambda x: x**2
+        func_args = lambda x, a: a*x**2
+        npoints = 50000
+        res_noargs, error_noargs = mcmiser(func_noargs, npoints, [0.],[1.], seed=12345)
+        res_args, error_args = mcmiser(func_args, npoints, [0.],[1.], seed=12345, args=(1,))
+        self.assertEqual(res_noargs, res_args)
+        self.assertEqual(error_noargs, error_args)
+
+    def test_args2(self):
+        """
+        Check that MISER works with arguments (2)
+        """
+        func_noargs = lambda x: x**2
+        func_args = lambda x, a: a*x**2
+        npoints = 50000
+        res_noargs, error_noargs = mcmiser(func_noargs, npoints, [0.],[1.], seed=12345)
+        res_args, error_args = mcmiser(func_args, npoints, [0.],[1.], seed=12345, args=(2,))
+        self.assertEqual(2*res_noargs, res_args)
+        self.assertEqual(2*error_noargs, error_args)
         
 
 if __name__ == '__main__':

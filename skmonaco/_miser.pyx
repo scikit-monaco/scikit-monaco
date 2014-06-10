@@ -20,8 +20,50 @@ ctypedef struct MiserParams:
     double exponent
 
 
+# KERNELS for calculating the maximum and minimum in 
+# each region.
+
+cdef void miser_get_max_min_noargs(object f, int npoints, int ndims, 
+        cnp.ndarray[DOUBLE,ndim=2] points,
+        double* xmid, double* maxl, double* minl, double* maxu, double* minu):
+    cdef:
+        int ipt
+        int idim
+        double fval
+
+    for ipt in range(npoints):
+        fval = f(points[ipt,:])
+        for idim in range(ndims):
+            if points[ipt,idim] < xmid[idim]:
+                maxl[idim] = fmax(fval,maxl[idim])
+                minl[idim] = fmin(fval,minl[idim])
+            else:
+                maxu[idim] = fmax(fval,maxu[idim])
+                minu[idim] = fmin(fval,minu[idim])
+
+cdef void miser_get_max_min_args(object f, int npoints, int ndims,
+        cnp.ndarray[DOUBLE,ndim=2] points,
+        double* xmid, double* maxl, double* minl, double* maxu, double* minu, object args):
+    cdef:
+        int ipt
+        int idim
+        double fval
+
+    for ipt in range(npoints):
+        fval = f(points[ipt,:],*args)
+        for idim in range(ndims):
+            if points[ipt,idim] < xmid[idim]:
+                maxl[idim] = fmax(fval,maxl[idim])
+                minl[idim] = fmin(fval,minl[idim])
+            else:
+                maxu[idim] = fmax(fval,maxu[idim])
+                minu[idim] = fmin(fval,minu[idim])
+
+
+
 cdef void miser_kernel(object f, object ranf, int npoints, int ndims, 
-        double* xl, double* xu, MiserParams* params,double* ave, double* var):
+        double* xl, double* xu, MiserParams* params, int has_args, object args, 
+        double* ave, double* var):
     cdef:
         int idim,ipt,idim_star,npre,npointsl,npointsu
         double summ, sum2, fval,sigl,sigu,sigl_star,sigu_star,npoints_float
@@ -33,7 +75,10 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         # straight mc
         points = ranf(size=(npoints,ndims))
         core.generate_points(npoints,ndims,xl,xu,points)
-        core.mc_kernel_noargs(f,npoints,ndims,points,&summ,&sum2)
+        if has_args:
+            core.mc_kernel(f, npoints, ndims, points, args, &summ, &sum2)
+        else:
+            core.mc_kernel_noargs(f,npoints,ndims,points,&summ,&sum2)
         npoints_float = <double>npoints
         ave[0] = summ/npoints_float
         var[0] = (sum2-summ**2/npoints_float)/(npoints_float**2)
@@ -75,15 +120,12 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
             maxu[idim] = -BIG
             minu[idim] = BIG
 
-        for ipt in range(npre):
-            fval = f(points[ipt,:])
-            for idim in range(ndims):
-                if points[ipt,idim] < xmid[idim]:
-                    maxl[idim] = fmax(fval,maxl[idim])
-                    minl[idim] = fmin(fval,minl[idim])
-                else:
-                    maxu[idim] = fmax(fval,maxu[idim])
-                    minu[idim] = fmin(fval,minu[idim])
+        if has_args:
+            miser_get_max_min_args(f, npre, ndims, points,
+                    xmid, maxl, minl, maxu, minu, args)
+        else:
+            miser_get_max_min_noargs(f, npre, ndims, points,
+                    xmid, maxl, minl, maxu, minu)
 
         sum_star = BIG
         idim_star = -1
@@ -127,8 +169,10 @@ cdef void miser_kernel(object f, object ranf, int npoints, int ndims,
         free(minu)
 
         # Recurse
-        miser_kernel(f,ranf,npointsl,ndims,xl,newxu,params,&avel,&varl)
-        miser_kernel(f,ranf,npointsu,ndims,newxl,xu,params,&aveu,&varu)
+        miser_kernel(f,ranf,npointsl,ndims,xl,newxu,params,has_args,args,
+                &avel,&varl)
+        miser_kernel(f,ranf,npointsu,ndims,newxl,xu,params,has_args,args,
+                &aveu,&varu)
 
         free(newxl)
         free(newxu)
@@ -158,11 +202,9 @@ def integrate_miser(f,npoints,xl,xu,args=(),
     ranf = rng.ranf
     xl_tmp = np.array(xl)
     xu_tmp = np.array(xu)
-    if len(args) > 0:
-        raise NotImplementedError
     assert len(xl_tmp) == len(xu_tmp)
     miser_kernel(f,ranf,npoints,len(xl_tmp),<double*>xl_tmp.data,<double*>xu_tmp.data,
-            &params, &ave, &var)
+            &params, 1 if len(args) else 0, args, &ave, &var)
     volume = np.abs(np.multiply.reduce(xu_tmp-xl_tmp))
     return ave*volume,np.sqrt(var)*volume
 
