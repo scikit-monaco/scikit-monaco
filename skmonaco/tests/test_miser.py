@@ -103,7 +103,7 @@ class TestMCMiser(TestCase):
 
     def test_zero_volume(self):
         """
-        Check that passing an empty integration volume raises ValueError.
+        Passing empty integration volume to MISER raises ValueError.
         """
         with self.assertRaises(ValueError):
             mcmiser(lambda x:x**2, 20000, [0.],[0.])

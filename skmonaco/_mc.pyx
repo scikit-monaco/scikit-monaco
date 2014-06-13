@@ -83,6 +83,8 @@ def integrate_uniform(f,int npoints, xl, xu, args=(),rng=numpy.random,seed=None)
 
     points = rng.ranf((npoints,dim))
     volume = abs(np.multiply.reduce(xu-xl))
+    if volume == 0.:
+        raise ValueError("Integration volume is zero.")
     core.generate_points(npoints, dim, &(xl_a[0]), &(xu_a[0]), points)
     return run_integral(f,npoints,dim,points,volume,args)
     
