@@ -316,6 +316,13 @@ class TestMCQuad(TestCase):
         assert res != res2
         assert error != error2
 
+    def test_zero_volume(self):
+        """
+        Passing an empty integration volume raises ValueError.
+        """
+        with self.assertRaises(ValueError):
+            mcquad(lambda x:x**2, 20000, [0.],[0.])
+
 
 if __name__ == '__main__':
     # Command line arguments are passed directly to 'nose'.

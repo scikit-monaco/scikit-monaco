@@ -1,22 +1,28 @@
 
 from __future__ import print_function
 from numpy.testing import measure
-from skmonaco import mcquad
+from skmonaco import mcimport
+import numpy as np
+from numpy.random import multivariate_normal
 
 
 def run_print(test_list):
     print()
-    print(" Integrating sum(x**2) -- Uniform Monte Carlo")
-    print(" ============================================")
+    print(" Integrating exp(-sum(x**2))*sum(x**2) w. importance sampling")
+    print(" ============================================================")
     print()
     print(" ndims | npoints | nprocs | time ")
     print(" ------------------------------- ")
     
     for ndims,npoints,nprocs,repeat in test_list:
         print(" {ndims:5} | {npoints:7} | {nprocs:6} |".format(ndims=ndims,npoints=npoints,nprocs=nprocs),end="")
-        xl = [0.]*ndims
-        xu = [1.]*ndims
-        time = measure("mcquad(lambda x: sum(x**2),{npoints},{xl},{xu},nprocs={nprocs})".format(npoints=npoints,xl=str(xl),xu=str(xu),nprocs=str(nprocs)),repeat)
+        mean = "np.zeros(({ndims},))".format(ndims=ndims)
+        cov = "np.eye({ndims}) / np.sqrt(2.)".format(ndims=ndims)
+        time = measure(
+                "mcimport(lambda x: sum(x**2),{npoints},\
+                lambda size: multivariate_normal({mean},{cov},size),\
+                nprocs={nprocs})".format(
+            npoints=npoints,mean=mean,cov=cov,nprocs=str(nprocs)),repeat)
         print(" {time:.2f}  (seconds for {ncalls} calls)".format(time=time,ncalls=repeat))
 
 

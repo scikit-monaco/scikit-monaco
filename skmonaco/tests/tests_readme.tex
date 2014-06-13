@@ -19,6 +19,7 @@ We summarise the analytical results used in the tests for
 \verb=scikit-monaco=. 
 \end{abstract}
 
+\section{Uniform Sampling MC}
 
 Following Numerical Recipes, we calculate the standard error in the Monte-Carlo
 integration of the function $f$ as:
@@ -32,13 +33,13 @@ $\Omega$ is the volume being sampled during the integration and $x$ denotes all
 the variables of integration.
 
 
-\section{Constant function}
+\subsection{Constant function}
 
 Let $f(x) = 1$. Then, $\expval{f} = \Omega$, where $\Omega$ is the volume of
 integration. $\expval{f^2} = 1$, such that $\Err_N = 0$ for all $N > 0$.
 
 
-\section{Product function}
+\subsection{Product function}
 
 Let $f(x) = \prod_i^d x_i$, where $d$ is the dimensionality of the
 integration. Thus, if $d = 2$, $f(x,y) = xy$. We consider the $d$-dimensional
@@ -56,7 +57,7 @@ If $a = 0$ and $b=1$, we have $\expval{f} = 1/2^d$ and $\expval{f^2} = 1/3^d$.
 Then, $\Err_N(f) = \frac{\sqrt{1/3^d - 1/4^d}}{N}$.
 
 
-\section{Gaussian}
+\subsection{Gaussian}
 
 Let $f(x) = \prod_i^d \exp(-\beta^2 x_i^2)$. Again, we consider the
 hypercube such that $a \le x_i \le b$ for each $i$. Then:
@@ -66,5 +67,39 @@ hypercube such that $a \le x_i \le b$ for each $i$. Then:
     \expval{f^2} &=& \frac{\sqrt{\pi/2}}{2\beta} (\erf(\sqrt{2}\beta b) -
     \erf(\sqrt{2}\beta a)
 \end{eqnarray}
+
+
+\section{MISER Monte-Carlo}
+
+Testing that the MISER algorithm returns the correct value (within error bars)
+is trivial, provided the integral can be calculated by some ``trusted'' means.
+
+Testing that the MISER algorithm returns the correct error is more difficult.
+Unlike for simple uniform sampling case, there is no easy formula for the
+calculation of the error. What we can do, though, is make sure that the error
+predicted is correct, \emph{on average}. 
+
+Let's assume that we are estimating an integral $I$. Let $I^*$ denote the
+correct, analytical value of $I$. 
+
+Pre test
+
+$\langle I \rangle$ is the average of all the MC calls.
+
+$\expval{\sigma}$ is the average of the errors.
+
+$S_I$ is the standard error in $I-I^*$.
+
+\begin{eqnarray}
+    \langle I \rangle &=& I^* \pm \langle\sigma\rangle/\sqrt{N} \\
+    \langle \sigma \rangle &=& S_I \pm S_I / \sqrt{2(N-1)}
+\end{eqnarray}
+
+Then, if those tests pass, extract:
+
+$\expval{\sigma}$ : allowable error.
+
+$\expval{S_\sigma}$ : allowable error in error.
+
 
 \end{document}

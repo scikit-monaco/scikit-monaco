@@ -4,7 +4,7 @@ Reference Guide
 
 .. currentmodule:: skmonaco
 
-Uniform sampling Monte-Carlo integration
+Uniform sampling Monte Carlo integration
 ----------------------------------------
 
 `mcquad` samples uniformly from a hypercube. This method can also be used to
@@ -31,6 +31,20 @@ The integration proceeds by sampling from :math:`\rho(x)` and calculating
 `mcimport` function.
 
 .. autofunction:: mcimport 
+
+MISER Monte Carlo
+-----------------
+
+`mcmiser` samples from a hypercube using the MISER algorithm, and
+can also be used to integrate over more complicated volumes using the procedure
+described in :ref:`complex-integration-volumes`. The algorithm is adaptive,
+inasmuch as it will use more points in regions where the variance of the
+integrand is large. It is almost certainly likely to be superior to `mcquad`
+for "complicated" integrands (integrands which are smooth over a large fraction
+of the integration region but with large variance in a small region), with
+dimensionality below about 6.
+
+.. autofunction:: mcmiser
 
 Utility functions
 -----------------

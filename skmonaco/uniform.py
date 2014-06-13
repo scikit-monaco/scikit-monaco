@@ -47,18 +47,19 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
     """
     Compute a definite integral.
 
-    Integrate `f` in a hypercube using a uniform Monte-Carlo method.
+    Integrate `f` in a hypercube using a uniform Monte Carlo method.
     
     Parameters
     ----------
     f : function
-        A Python function or method to integrate. It must take an iterable
+        The integrand. It must take an iterable
         of length `d`, where `d` is the dimensionality of the integral,
         as argument, and return either a float or a numpy array.
     npoints : int
-        Number of points to use in integration.
+        Number of points to use for the integration.
     xl, xu : iterable
-        Iterable of length d denoting the bottom left corner and upper 
+        Iterable of length `d`, where `d` is the dimensionality of 
+        the integrand, denoting the bottom left corner and upper 
         right corner of the integration region.
 
     Other Parameters
@@ -84,6 +85,8 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
         results are stored. Each batch is run by a single process. It may 
         be useful to reduce `batch_size` if the dimensionality of the 
         integration is very large.
+    args : list
+        List of arguments to pass to `f` when integrating.
 
     Returns
     -------
@@ -103,7 +106,7 @@ def mcquad(f,npoints,xl,xu,args=(),rng=None,nprocs=1,
     (0.24966..., 0.0015488...)
 
     Calculate pi/4 by summing over all points in the unit circle that 
-    fall within 1 of the origin.
+    are within 1 unit of the origin.
 
     >>> mcquad(lambda x: 1 if sum(x**2) < 1 else 0.,
     ...     npoints=20000, xl=[0.,0.], xu=[1.,1.])
