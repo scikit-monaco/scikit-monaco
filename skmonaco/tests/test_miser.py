@@ -100,6 +100,13 @@ class TestMCMiser(TestCase):
         res_args, error_args = mcmiser(func_args, npoints, [0.],[1.], seed=12345, args=(2,))
         self.assertEqual(2*res_noargs, res_args)
         self.assertEqual(2*error_noargs, error_args)
+
+    def test_zero_volume(self):
+        """
+        Check that passing an empty integration volume raises ValueError.
+        """
+        with self.assertRaises(ValueError):
+            mcmiser(lambda x:x**2, 20000, [0.],[0.])
         
 
 if __name__ == '__main__':
