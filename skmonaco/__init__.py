@@ -8,6 +8,7 @@ This module provides a toolkit for Monte Carlo integration.
 
     mcquad   -- Integration over a uniformly-sampled hypercube.
     mcimport -- Integration over points distributed according to a particular pdf.
+    mcmiser  -- Integration over a hypercube using MISER algorithm.
     integrate_from_points -- Integration of a function over specific points.
 """
 
