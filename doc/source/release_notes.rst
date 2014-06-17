@@ -2,6 +2,15 @@
 Release Notes
 -------------
 
+Scikit-monaco v0.2 release notes
+++++++++++++++++++++++++++++++++
+
+* Add MISER algorith for recursive stratified sampling.
+
+* All integration routines now respond to KeyboardInterrupt.
+
+* Additional benchmarks for importance sampling.
+
 Scikit-monaco v0.1.5 release notes
 ++++++++++++++++++++++++++++++++++
 
