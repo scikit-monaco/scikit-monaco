@@ -198,9 +198,6 @@ def integrate_miser(f,npoints,xl,xu,args=(),
     if rng is None:
         import numpy.random
         rng = numpy.random
-    if seed is None:
-        import os,time
-        seed = [time.time()+os.getpid()]
     rng.seed(seed)
     ranf = rng.ranf
     xl_tmp = np.array(xl)
