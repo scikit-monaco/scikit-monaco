@@ -2,6 +2,11 @@
 Release Notes
 -------------
 
+Scikit-monaco v0.2.1 release notes
+++++++++++++++++++++++++++++++++++
+
+* Fixed bug when using MISER with numpy 1.9.0.
+
 Scikit-monaco v0.2 release notes
 ++++++++++++++++++++++++++++++++
 
