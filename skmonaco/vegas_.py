@@ -30,6 +30,34 @@ def mcvegas(f, npoints, xl, xu):
         Iterable of length `d`, where `d` is the dimensionality of the 
         integrand. `xl` denotes the bottom left corner and `xu` the top
         right corner of the integration region.
+
+    Returns
+    -------
+    value : float
+        The estimate for the integral.
+    error : float
+        An estimate for the error, corresponding to one standard 
+        deviation. The integral has, approximately, a 0.68 
+        probability of being within `error` of the correct answer.
+
+    Notes
+    -----
+    This function is a thin wrapper around P. Lepage's vegas module [vegas]_, 
+    which is under the GPL. 
+
+    References
+    ----------
+    .. [vegas] G. P. Lepage, https://pypi.python.org/pypi/vegas
+
+    Examples
+    --------
+    Integrate x*y over the unit square. The correct value is 1/4.
+
+    >>> mcvegas(lambda x: x[0]*x[1], npoints=20000, xl=[0.,0.], xu=[1.,1.])
+    (0.249883... 0.000116...)
+
+    Note that this is about fifteen times more accurate than the equivalent
+    call to `mcquad`, for the same number of points.
     """
     try:
         niterations, nevaluations = npoints
