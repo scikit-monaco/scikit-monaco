@@ -4,7 +4,7 @@ from __future__ import print_function
 import vegas
 from collections import namedtuple
 
-npoints_tuple = namedtuple("npoints_tuple", ["niterations", "nevaluations"])
+Npoints = namedtuple("Npoints", ["niterations", "nevaluations"])
 
 NITERATIONS_DEFAULT = 10
 
@@ -21,7 +21,7 @@ def mcvegas(f, npoints, xl, xu):
         The integrand. Must take an iterable of length `d`, where `d`
         is the dimensionality of the integral, as argument, and return
         a float or an iterable of floats.
-    npoints: int or (int, int) pair
+    npoints: int, (int, int) pair or Npoints object
         An upper bound on the number of points. If passed as an integer,
         the points will be divided evenly over ten iterations. If passed
         as a tuple, the first value is the number of iterations and the 
