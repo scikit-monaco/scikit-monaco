@@ -3,4 +3,3 @@
 Sphinx
 numpy
 numpydoc
-vegas

@@ -1,8 +1,19 @@
 
 from __future__ import print_function
 
-import vegas
 from collections import namedtuple
+
+# Ugly hack to work around problem building docs caused by Cython import 
+# issue. See, for instance, this bug:
+# https://github.com/pypa/pip/issues/1958
+# This seems to happen with packages that need Cython to build from
+# source, like Vegas.
+try:
+    import vegas
+except ImportError:
+    import warnings
+    warnings.warn(
+        "Could not find Vegas module. Install it using 'pip install vegas'")
 
 Npoints = namedtuple("Npoints", ["niterations", "nevaluations"])
 
