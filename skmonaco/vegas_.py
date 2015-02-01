@@ -8,7 +8,7 @@ Npoints = namedtuple("Npoints", ["niterations", "nevaluations"])
 
 NITERATIONS_DEFAULT = 10
 
-def mcvegas(f, npoints, xl, xu):
+def mcvegas(f, npoints, xl, xu, full_output=False):
     """
     Compute a definite integral using the VEGAS algorithm.
 
@@ -30,15 +30,38 @@ def mcvegas(f, npoints, xl, xu):
         Iterable of length `d`, where `d` is the dimensionality of the 
         integrand. `xl` denotes the bottom left corner and `xu` the top
         right corner of the integration region.
+    full_output : boolean
+        When true, the return value contains, as its third element, a 
+        dictionary with additional information. See `full_output` below.
 
     Returns
     -------
     value : float
         The estimate for the integral.
+
     error : float
         An estimate for the error, corresponding to one standard 
         deviation. The integral has, approximately, a 0.68 
         probability of being within `error` of the correct answer.
+
+    additional_output : dictionary
+        If `full_output` is set to True, `vegas` returns a dictionary with
+        additional information. This dictionary contains the following values:
+
+        ``chi2`` : The average squared deviation of errors for each , normalised by
+                 the standard deviation for that iteration. If this number is 
+                 significantly larger than the number of iterations (plus or 
+                 minus its own square root), the distribution of errors is non-
+                 gaussian, so the value returned by `error` is likely to 
+                 underestimate the true error in the integral.
+
+        ``Q`` : p-value for chi2. If this number is less than 0.1, `error` is
+              likely to underestimate the true error in the integral. 
+
+        ``itn_results`` : the results at each iteration of the Vegas algorithm.
+        
+        ``itn_summary`` : a tabular representation of the results at each
+                        iteration.
 
     Notes
     -----
@@ -47,7 +70,8 @@ def mcvegas(f, npoints, xl, xu):
 
     References
     ----------
-    .. [vegas] G. P. Lepage, https://pypi.python.org/pypi/vegas
+    .. [vegas] G. P. Lepage 
+            https://pypi.python.org/pypi/vegas
 
     Examples
     --------
@@ -66,4 +90,11 @@ def mcvegas(f, npoints, xl, xu):
         nevaluations = npoints/niterations
     integrator = vegas.Integrator(zip(xl, xu))
     result = integrator(f, nitn=niterations, neval=nevaluations)
-    return result.mean, result.sdev
+    if full_output:
+        additional_output = dict(
+            chi2=result.chi2, Q=result.Q, 
+            itn_results=result.itn_results, itn_summary=result.summary()
+        )
+        return result.mean, result.sdev, additional_output
+    else: 
+        return result.mean, result.sdev
