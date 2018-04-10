@@ -46,6 +46,22 @@ dimensionality below about 6.
 
 .. autofunction:: mcmiser
 
+VEGAS Monte Carlo
+-----------------
+
+`mcvegas` samples from a hypercube using the VEGAS algorithm. As with `mcmiser`,
+more complex integration volumes can be achieved as described in 
+:ref:`complex-integration-volumes`. 
+The algorithm is adaptive, so will use more points in
+regions where the variance of the integral is large.
+
+`mcvegas` relies on the Python package `Vegas
+<https://pypi.python.org/pypi/vegas>`__, produced by Peter Lepage, who first
+proposed the VEGAS algorithm. Note that the Vegas package is licensed under the
+GPL.
+
+.. autofunction:: mcvegas
+
 Utility functions
 -----------------
 
