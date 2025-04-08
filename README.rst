@@ -32,6 +32,15 @@ Links
 Installation
 ------------
 
+**The installation from Pypi seems to have been broken for quite some time**
+(see <https://github.com/scikit-monaco/scikit-monaco/issues/14> or
+<https://github.com/scikit-monaco/scikit-monaco/issues/16>), **and we are working on it.**
+
+**As of April 8th 2025, a partial fix is to install @Naereen's development version,
+directly from GitHub**::
+
+    $ pip install --upgrade git+https://github.com/Naereen/scikit-monaco
+
 From Pypi
 ^^^^^^^^^
 
@@ -53,13 +62,19 @@ Clone the repository using::
 
 And run::
 
-    $ python setup.py install
+    $ # python setup.py install # this is deprecated
+    $ pip install .
 
 in the project's root directory.
 
 
 Testing
 -------
+
+The testing (and benchmarking) is broken as well since a few years
+(see <https://github.com/scikit-monaco/scikit-monaco/issues/15>
+and <https://github.com/scikit-monaco/scikit-monaco/issues/17>),
+we will work on fixing it soon.
 
 After the installation, run ``$ python runtests.py`` in the package's root directory.
 
@@ -69,4 +84,4 @@ Issue reporting and contributing
 
 Report issues using the `github issue tracker <https://github.com/scikit-monaco/scikit-monaco/issues>`_.
 
-Read the CONTRIBUTING guide to learn how to contribute.
+Read the `CONTRIBUTING <https://github.com/scikit-monaco/scikit-monaco/blob/master/CONTRIBUTING.rst>`_ guide to learn how to contribute.
