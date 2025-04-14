@@ -9,6 +9,7 @@ This module provides a toolkit for Monte Carlo integration.
     mcquad   -- Integration over a uniformly-sampled hypercube.
     mcimport -- Integration over points distributed according to a particular pdf.
     mcmiser  -- Integration over a hypercube using MISER algorithm.
+    mcvegas  -- Integration over a hypercupe using VEGAS algorithm.
     integrate_from_points -- Integration of a function over specific points.
 """
 
@@ -25,6 +26,7 @@ if not __SKMONACO_SETUP__ :
     from .importance import *
     from .from_pts import *
     from .miser import *
+    from .vegas_ import *
 
     from numpy.testing import Tester
     test = Tester().test
